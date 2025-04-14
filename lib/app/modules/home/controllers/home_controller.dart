@@ -4,18 +4,62 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:quran/app/data/db/bookmark.dart';
 import 'package:quran/app/data/models/meta.dart';
+import 'package:quran/app/routes/app_pages.dart';
 import 'package:sqflite/sqflite.dart';
 
 class HomeController extends GetxController {
   Surahs? allSurahs; // Menyimpan semua data Surah
   DatabaseManager database = DatabaseManager.instance;
 
-
   void deleteBookmark(int id) async {
     Database db = await database.db;
     db.delete("bookmarks", where: "id = $id");
     update();
     Get.snackbar("Berhasil", "Telah berhasil Menghapus Bookmark");
+  }
+
+  // Di HomeController
+  Future<void> navigateToBookmark(
+    Map<String, dynamic> bookmark, {
+    bool viaJuz = false,
+  }) async {
+    try {
+      if (viaJuz) {
+      // Navigasi ke Juz
+      int juzNumber = int.tryParse(bookmark['juz'] ?? '1') ?? 1;
+      int ayahNumber = int.tryParse(bookmark['ayah'] ?? '1') ?? 1;
+      int indexAyah = int.tryParse(bookmark['index_ayah'] ?? '0') ?? 0;
+
+      Get.toNamed(
+        Routes.DETAIL_JUZ,
+        arguments: juzNumber - 1, // Juz dimulai dari 0
+        parameters: {
+          'ayah': ayahNumber.toString(),
+          'index_ayah': indexAyah.toString(),
+        },
+      );
+      } else {
+        // Navigasi ke Surah
+        final allSurahs = await getAllSurah();
+        if (allSurahs != null) {
+          final surah = allSurahs.references?.firstWhere(
+            (s) => s.englishName == bookmark['surah'],
+            orElse: () => References(number: 1),
+          );
+
+          if (surah != null) {
+            int ayahNumber = int.tryParse(bookmark['ayah'] ?? '1') ?? 1;
+            Get.toNamed(
+              Routes.DETAIL_SURAH,
+              arguments: surah,
+              parameters: {'ayah': ayahNumber.toString()},
+            );
+          }
+        }
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Gagal membuka bookmark: $e");
+    }
   }
 
   Future<Map<String, dynamic>?> getLastRead() async {

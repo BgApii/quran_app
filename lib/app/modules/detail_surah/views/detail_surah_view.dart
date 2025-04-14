@@ -156,6 +156,16 @@ class DetailSurahView extends GetView<DetailSurahController> {
                         final latinAyah = latin.ayahs![index];
                         final indoAyah = indo.ayahs![index];
 
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (Get.parameters['ayah'] != null) {
+                            int ayahNumber =
+                                int.tryParse(Get.parameters['ayah'] ?? '') ?? 0;
+                            if (ayahNumber > 0) {
+                              controller.scrollToAyah(ayahNumber);
+                            }
+                          }
+                        });
+
                         final isFirstAyah = arabAyah.numberInSurah == 1;
                         final hasBismillah =
                             arabAyah.text?.startsWith(
@@ -177,14 +187,14 @@ class DetailSurahView extends GetView<DetailSurahController> {
                             cleanedArabicText.replaceAll('۩', '').trim();
                         final settingsController =
                             Get.find<SettingsController>();
-                        return AutoScrollTag(
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            AutoScrollTag(
                           key: ValueKey(index + 3),
-                index: index + 3,
-                controller: controller.scrollC,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Padding(
+                          index: index + 3,
+                          controller: controller.scrollC,
+                              child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 10.0,
                                   horizontal: 8.0,
@@ -198,160 +208,168 @@ class DetailSurahView extends GetView<DetailSurahController> {
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 8),
-                              if (settingsController
-                                  .isTransliterationEnabled
-                                  .value)
-                                Text(
-                                  latinAyah.text ?? '',
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize:
-                                        settingsController
-                                            .transliterationFontSize
-                                            .value,
-                                    color: Color(0xFF206B3A),
-                                  ),
-                                ),
-                              if (settingsController
-                                  .isTransliterationEnabled
-                                  .value)
-                                SizedBox(height: 8),
-                              if (settingsController.isTranslationEnabled.value)
-                                Text(
-                                  indoAyah.text ?? '',
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize:
-                                        settingsController
-                                            .translationFontSize
-                                            .value,
-                                  ),
-                                ),
-                              SizedBox(height: 8),
-                              Card(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 8.0,
-                                    horizontal: 16.0,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      CircleAvatar(
-                                        child: Text("${arabAyah.numberInSurah}"),
-                                      ),
-                                      Obx(
-                                        () => Row(
-                                          children: [
-                                            // Bookmark Icon
-                                            IconButton(
-                                              onPressed: () {
-                                                Get.defaultDialog(
-                                                  title: "BOOKMARK",
-                                                  middleText:
-                                                      "Pilih jenis bookmark",
-                                                  actions: [
-                                                    ElevatedButton(
-                                                      onPressed: () async {
-                                                        await controller
-                                                            .addBookmark(
-                                                              true,
-                                                              arab,
-                                                              arabAyah,
-                                                              index,
-                                                            );
-                                                        homeC.update();
-                                                      },
-                                                      style:
-                                                          ElevatedButton.styleFrom(
-                                                            backgroundColor:
-                                                                appGreenDark,
-                                                          ),
-                                                      child: Text(
-                                                        "Last Read",
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    ElevatedButton(
-                                                      onPressed: () {
-                                                        controller.addBookmark(
-                                                          false,
-                                                          arab,
-                                                          arabAyah,
-                                                          index,
-                                                        );
-                                                      },
-                                                      child: Text(
-                                                        "Bookmark",
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                              icon: Icon(Icons.bookmark_outline),
-                                            ),
-                                            // Play, Pause, Resume, or Stop Icon
-                                            if (controller
-                                                        .currentPlayingAyah
-                                                        .value ==
-                                                    arabAyah.number &&
-                                                controller.audioCondition.value ==
-                                                    "play")
-                                              IconButton(
-                                                onPressed: () {
-                                                  controller.pauseAudio();
-                                                },
-                                                icon: Icon(Icons.pause),
-                                              )
-                                            else if (controller
-                                                        .currentPlayingAyah
-                                                        .value ==
-                                                    arabAyah.number &&
-                                                controller.audioCondition.value ==
-                                                    "pause")
-                                              IconButton(
-                                                onPressed: () {
-                                                  controller.resumeAudio();
-                                                },
-                                                icon: Icon(Icons.play_arrow),
-                                              )
-                                            else
-                                              IconButton(
-                                                onPressed: () {
-                                                  controller.playAudio(
-                                                    arabAyah.number.toString(),
-                                                    arabAyah.number!,
-                                                  );
-                                                },
-                                                icon: Icon(Icons.play_arrow),
-                                              ),
-                                            // Stop Icon
-                                            if (controller
-                                                    .currentPlayingAyah
-                                                    .value ==
-                                                arabAyah.number)
-                                              IconButton(
-                                                onPressed: () {
-                                                  controller.stopAudio();
-                                                },
-                                                icon: Icon(Icons.stop),
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                            ),
+                            SizedBox(height: 8),
+                            if (settingsController
+                                .isTransliterationEnabled
+                                .value)
+                              Text(
+                                latinAyah.text ?? '',
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontSize:
+                                      settingsController
+                                          .transliterationFontSize
+                                          .value,
+                                  color: Color(0xFF206B3A),
                                 ),
                               ),
-                            ],
-                          ),
+                            if (settingsController
+                                .isTransliterationEnabled
+                                .value)
+                              SizedBox(height: 8),
+                            if (settingsController.isTranslationEnabled.value)
+                              Text(
+                                indoAyah.text ?? '',
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontSize:
+                                      settingsController
+                                          .translationFontSize
+                                          .value,
+                                ),
+                              ),
+                            SizedBox(height: 8),
+                            Card(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8.0,
+                                  horizontal: 16.0,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    CircleAvatar(
+                                      child: Text(
+                                        "${arabAyah.numberInSurah}",
+                                      ),
+                                    ),
+                                    Obx(
+                                      () => Row(
+                                        children: [
+                                          // Bookmark Icon
+                                          IconButton(
+                                            onPressed: () {
+                                              Get.defaultDialog(
+                                                title: "BOOKMARK",
+                                                middleText:
+                                                    "Pilih jenis bookmark",
+                                                actions: [
+                                                  ElevatedButton(
+                                                    onPressed: () async {
+                                                      await controller
+                                                          .addBookmark(
+                                                            true,
+                                                            arab,
+                                                            arabAyah,
+                                                            index,
+                                                          );
+                                                      homeC.update();
+                                                    },
+                                                    style:
+                                                        ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                              appGreenDark,
+                                                        ),
+                                                    child: Text(
+                                                      "Last Read",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  ElevatedButton(
+                                                    onPressed: () {
+                                                      controller.addBookmark(
+                                                        false,
+                                                        arab,
+                                                        arabAyah,
+                                                        index,
+                                                      );
+                                                    },
+                                                    child: Text(
+                                                      "Bookmark",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                            icon: Icon(
+                                              Icons.bookmark_outline,
+                                            ),
+                                          ),
+                                          // Play, Pause, Resume, or Stop Icon
+                                          if (controller
+                                                      .currentPlayingAyah
+                                                      .value ==
+                                                  arabAyah.number &&
+                                              controller
+                                                      .audioCondition
+                                                      .value ==
+                                                  "play")
+                                            IconButton(
+                                              onPressed: () {
+                                                controller.pauseAudio();
+                                              },
+                                              icon: Icon(Icons.pause),
+                                            )
+                                          else if (controller
+                                                      .currentPlayingAyah
+                                                      .value ==
+                                                  arabAyah.number &&
+                                              controller
+                                                      .audioCondition
+                                                      .value ==
+                                                  "pause")
+                                            IconButton(
+                                              onPressed: () {
+                                                controller.resumeAudio();
+                                              },
+                                              icon: Icon(Icons.play_arrow),
+                                            )
+                                          else
+                                            IconButton(
+                                              onPressed: () {
+                                                controller.playAudio(
+                                                  arabAyah.number.toString(),
+                                                  arabAyah.number!,
+                                                );
+                                              },
+                                              icon: Icon(Icons.play_arrow),
+                                            ),
+                                          // Stop Icon
+                                          if (controller
+                                                  .currentPlayingAyah
+                                                  .value ==
+                                              arabAyah.number)
+                                            IconButton(
+                                              onPressed: () {
+                                                controller.stopAudio();
+                                              },
+                                              icon: Icon(Icons.stop),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
                         );
                       },
                     ),

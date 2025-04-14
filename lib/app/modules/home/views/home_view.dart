@@ -166,9 +166,36 @@ class HomeView extends GetView<HomeController> {
                                   );
                                 }
                               },
+                              // Di dalam HomeView, pada bagian Last Read Container
                               onTap: () {
                                 if (lastRead != null) {
-                                  print(lastRead);
+                                  Get.defaultDialog(
+                                    title: "Pilih Tampilan",
+                                    middleText: "Lihat berdasarkan:",
+                                    actions: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Get.back();
+                                          // Navigasi ke surah
+                                          controller.navigateToBookmark(
+                                            lastRead,
+                                          );
+                                        },
+                                        child: Text("Surah"),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Get.back();
+                                          // Navigasi ke juz
+                                          controller.navigateToBookmark(
+                                            lastRead,
+                                            viaJuz: true,
+                                          );
+                                        },
+                                        child: Text("Juz"),
+                                      ),
+                                    ],
+                                  );
                                 }
                               },
                               child: Stack(
@@ -448,8 +475,31 @@ class HomeView extends GetView<HomeController> {
                                 Map<String, dynamic> data =
                                     snapshot.data![index];
                                 return ListTile(
+                                  // Di HomeView, pada bagian Bookmark tab
                                   onTap: () {
-                                    print(data);
+                                    Get.defaultDialog(
+                                      title: "Pilih Tampilan",
+                                      middleText: "Lihat berdasarkan:",
+                                      actions: [
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Get.back();
+                                            controller.navigateToBookmark(data);
+                                          },
+                                          child: Text("Surah"),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Get.back();
+                                            controller.navigateToBookmark(
+                                              data,
+                                              viaJuz: true,
+                                            );
+                                          },
+                                          child: Text("Juz"),
+                                        ),
+                                      ],
+                                    );
                                   },
                                   leading: Text("${index + 1}"),
                                   title: Text("surah : ${data["surah"]}"),

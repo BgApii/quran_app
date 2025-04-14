@@ -45,6 +45,19 @@ class DetailSurahController extends GetxController {
     });
   }
 
+  // Di DetailSurahController, tambahkan method:
+  void scrollToAyah(int ayahNumber) async {
+    // Cari index ayah berdasarkan nomor
+    int index = ayahs.indexWhere((ayah) => ayah.numberInSurah == ayahNumber);
+
+    if (index != -1) {
+      await scrollC.scrollToIndex(
+        index + 3, // +3 karena ada widget lain di atas
+        preferPosition: AutoScrollPosition.begin,
+      );
+    }
+  }
+
   Future<void> addBookmark(
     bool lastRead,
     DetailSurah surah,
