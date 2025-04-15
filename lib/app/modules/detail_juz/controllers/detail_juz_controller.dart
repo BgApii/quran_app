@@ -58,12 +58,11 @@ class DetailJuzController extends GetxController {
         List checkdata = await db.query(
           "bookmarks",
           where:
-              "surah = ? AND ayah = ? AND juz = ? AND via = ? AND index_ayah = ? AND last_read = ?",
+              "surah = ? AND ayah = ? AND juz = ? AND index_ayah = ? AND last_read = ?",
           whereArgs: [
             surah.englishName,
             ayah.numberInSurah.toString(),
             ayah.juz.toString(),
-            "juz",
             index.toString(),
             0,
           ],
@@ -78,7 +77,6 @@ class DetailJuzController extends GetxController {
           "surah": surah.englishName,
           "ayah": ayah.numberInSurah.toString(),
           "juz": ayah.juz.toString(),
-          "via": "juz",
           "index_ayah": index.toString(),
           "last_read": lastRead ? 1 : 0,
         });

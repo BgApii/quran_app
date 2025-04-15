@@ -52,7 +52,7 @@ class DetailSurahController extends GetxController {
 
     if (index != -1) {
       await scrollC.scrollToIndex(
-        index + 3, // +3 karena ada widget lain di atas
+        index + 2, // +3 karena ada widget lain di atas
         preferPosition: AutoScrollPosition.begin,
       );
     }
@@ -74,12 +74,11 @@ class DetailSurahController extends GetxController {
         List checkdata = await db.query(
           "bookmarks",
           where:
-              "surah = ? AND ayah = ? AND juz = ? AND via = ? AND index_ayah = ? AND last_read = ?",
+              "surah = ? AND ayah = ? AND juz = ? AND index_ayah = ? AND last_read = ?",
           whereArgs: [
             surah.englishName,
             ayah.numberInSurah.toString(),
             ayah.juz.toString(),
-            "surah",
             index.toString(),
             0,
           ],
@@ -94,7 +93,6 @@ class DetailSurahController extends GetxController {
           "surah": surah.englishName,
           "ayah": ayah.numberInSurah.toString(),
           "juz": ayah.juz.toString(),
-          "via": "surah",
           "index_ayah": index.toString(),
           "last_read": lastRead ? 1 : 0,
         });

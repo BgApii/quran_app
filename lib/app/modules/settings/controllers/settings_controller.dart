@@ -28,6 +28,37 @@ class SettingsController extends GetxController {
     await loadAvailableAudioEditions(); // Add this line
   }
 
+  // Add this to your SettingsController
+  Future<void> resetSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Reset all settings to default values
+    arabicFontSize.value = 23.0;
+    translationFontSize.value = 16.0;
+    transliterationFontSize.value = 16.0;
+    isTransliterationEnabled.value = false;
+    isTranslationEnabled.value = true;
+    isDarkMode.value = false;
+
+    // Reset to default translations
+    selectedTranslation.value = translations.firstWhere(
+      (t) => t.identifier == 'en.sahih',
+      orElse: () => translations.first,
+    );
+
+    // Reset to default audio
+    selectedAudioEdition.value = audioEditions.firstWhere(
+      (t) => t.identifier == 'ar.alafasy',
+      orElse: () => audioEditions.first,
+    );
+
+    // Apply theme mode
+    Get.changeThemeMode(ThemeMode.light);
+
+    // Save the reset settings
+    await saveSettings();
+  }
+
   // Load settings from SharedPreferences
   Future<void> loadSettings() async {
     final prefs = await SharedPreferences.getInstance();

@@ -169,33 +169,8 @@ class HomeView extends GetView<HomeController> {
                               // Di dalam HomeView, pada bagian Last Read Container
                               onTap: () {
                                 if (lastRead != null) {
-                                  Get.defaultDialog(
-                                    title: "Pilih Tampilan",
-                                    middleText: "Lihat berdasarkan:",
-                                    actions: [
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Get.back();
-                                          // Navigasi ke surah
-                                          controller.navigateToBookmark(
-                                            lastRead,
-                                          );
-                                        },
-                                        child: Text("Surah"),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Get.back();
-                                          // Navigasi ke juz
-                                          controller.navigateToBookmark(
-                                            lastRead,
-                                            viaJuz: true,
-                                          );
-                                        },
-                                        child: Text("Juz"),
-                                      ),
-                                    ],
-                                  );
+                                  // Navigasi ke surah
+                                  controller.navigateToBookmark(lastRead);
                                 }
                               },
                               child: Stack(
@@ -477,34 +452,12 @@ class HomeView extends GetView<HomeController> {
                                 return ListTile(
                                   // Di HomeView, pada bagian Bookmark tab
                                   onTap: () {
-                                    Get.defaultDialog(
-                                      title: "Pilih Tampilan",
-                                      middleText: "Lihat berdasarkan:",
-                                      actions: [
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            Get.back();
-                                            controller.navigateToBookmark(data);
-                                          },
-                                          child: Text("Surah"),
-                                        ),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            Get.back();
-                                            controller.navigateToBookmark(
-                                              data,
-                                              viaJuz: true,
-                                            );
-                                          },
-                                          child: Text("Juz"),
-                                        ),
-                                      ],
-                                    );
+                                    controller.navigateToBookmark(data);
                                   },
                                   leading: Text("${index + 1}"),
                                   title: Text("surah : ${data["surah"]}"),
                                   subtitle: Text(
-                                    "Ayat : ${data["ayah"]} | Via : ${data["via"]}",
+                                    "Ayat : ${data["ayah"]} | Juz : ${data["juz"]}",
                                     style: TextStyle(
                                       color:
                                           Get.isDarkMode

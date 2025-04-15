@@ -168,6 +168,29 @@ class SettingsView extends GetView<SettingsController> {
               value: controller.isDarkMode.value,
             ),
           ),
+          // Add this to your SettingsView's ListView children, after the General section
+          Padding(
+            padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+            child: Text("Reset"),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color:
+                      Get.isDarkMode
+                          ? appGreyLight.withOpacity(0.1)
+                          : appGrey.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+            ),
+            child: ListTile(
+              onTap: () => _showResetConfirmation(),
+              title: Text("Reset All Settings"),
+              subtitle: Text("Restore all settings to default values"),
+            ),
+          ),
         ],
       ),
     );
@@ -327,6 +350,32 @@ class SettingsView extends GetView<SettingsController> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showResetConfirmation() {
+    Get.dialog(
+      AlertDialog(
+        title: Text("Reset Settings"),
+        content: Text(
+          "Are you sure you want to reset all settings to default values?",
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: Text("Cancel")),
+          TextButton(
+            onPressed: () async {
+              await controller.resetSettings();
+              Get.back();
+              Get.snackbar(
+                "Success",
+                "All settings have been reset",
+                snackPosition: SnackPosition.BOTTOM,
+              );
+            },
+            child: Text("Reset", style: TextStyle(color: Colors.red)),
+          ),
+        ],
       ),
     );
   }

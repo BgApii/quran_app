@@ -32,7 +32,6 @@ class DatabaseManager {
             surah TEXT NOT NULL,
             ayah TEXT NOT NULL,
             juz TEXT NOT NULL,
-            via TEXT NOT NULL,
             index_ayah TEXT NOT NULL,
             last_read INTEGER DEFAULT 0
           )

@@ -25,19 +25,19 @@ class HomeController extends GetxController {
   }) async {
     try {
       if (viaJuz) {
-      // Navigasi ke Juz
-      int juzNumber = int.tryParse(bookmark['juz'] ?? '1') ?? 1;
-      int ayahNumber = int.tryParse(bookmark['ayah'] ?? '1') ?? 1;
-      int indexAyah = int.tryParse(bookmark['index_ayah'] ?? '0') ?? 0;
+        // Navigasi ke Juz
+        int juzNumber = int.tryParse(bookmark['juz'] ?? '1') ?? 1;
+        int ayahNumber = int.tryParse(bookmark['ayah'] ?? '1') ?? 1;
+        int indexAyah = int.tryParse(bookmark['index_ayah'] ?? '0') ?? 0;
 
-      Get.toNamed(
-        Routes.DETAIL_JUZ,
-        arguments: juzNumber - 1, // Juz dimulai dari 0
-        parameters: {
-          'ayah': ayahNumber.toString(),
-          'index_ayah': indexAyah.toString(),
-        },
-      );
+        Get.toNamed(
+          Routes.DETAIL_JUZ,
+          arguments: juzNumber - 1, // Juz dimulai dari 0
+          parameters: {
+            'ayah': ayahNumber.toString(),
+            'index_ayah': indexAyah.toString(),
+          },
+        );
       } else {
         // Navigasi ke Surah
         final allSurahs = await getAllSurah();
