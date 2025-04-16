@@ -14,7 +14,7 @@ class HomeView extends GetView<HomeController> {
     controller.fetchAllSurah();
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(onPressed: () {}, icon: const Icon(Icons.menu)),
+        centerTitle: true,
         actions: [
           IconButton(
             onPressed: () {
@@ -227,7 +227,7 @@ class HomeView extends GetView<HomeController> {
                                         Text(
                                           lastRead == null
                                               ? "Belum ada Last Read"
-                                              : "Ayat ${lastRead["ayah"]} | Juz ${lastRead["juz"]}",
+                                              : "Verse ${lastRead["ayah"]} | Juz ${lastRead["juz"]}",
                                           style: TextStyle(
                                             fontSize: 12,
                                             color: appWhite,
@@ -339,7 +339,7 @@ class HomeView extends GetView<HomeController> {
                                   ),
                                 ),
                                 subtitle: Text(
-                                  "${surah.numberOfAyahs} Ayat | ${surah.revelationType}",
+                                  "${surah.numberOfAyahs} Verse | ${surah.revelationType}",
                                   style: TextStyle(
                                     color:
                                         Get.isDarkMode ? appGreyLight : appGrey,
@@ -454,10 +454,24 @@ class HomeView extends GetView<HomeController> {
                                   onTap: () {
                                     controller.navigateToBookmark(data);
                                   },
-                                  leading: Text("${index + 1}"),
-                                  title: Text("surah : ${data["surah"]}"),
+                                  leading: Container(
+                                    height: 40,
+                                    width: 40,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                          Get.isDarkMode
+                                              ? "assets/images/list_dark.png"
+                                              : "assets/images/list_light.png",
+                                        ),
+                                      ),
+                                    ),
+                                    child: Center(child: Text("${index + 1}")),
+                                  ),
+                                  // leading: Text("${index + 1}"),
+                                  title: Text("${data["surah"]}"),
                                   subtitle: Text(
-                                    "Ayat : ${data["ayah"]} | Juz : ${data["juz"]}",
+                                    "Verse ${data["ayah"]} | Juz ${data["juz"]}",
                                     style: TextStyle(
                                       color:
                                           Get.isDarkMode

@@ -30,7 +30,6 @@ class SettingsController extends GetxController {
 
   // Add this to your SettingsController
   Future<void> resetSettings() async {
-    final prefs = await SharedPreferences.getInstance();
 
     // Reset all settings to default values
     arabicFontSize.value = 23.0;

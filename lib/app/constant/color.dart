@@ -29,6 +29,7 @@ ThemeData light = ThemeData(
 
 ThemeData dark = ThemeData(
   brightness: Brightness.dark,
+
   appBarTheme: AppBarTheme(backgroundColor: appBlack, elevation: 1),
   primaryColor: appGreenLight2,
   scaffoldBackgroundColor: appBlack,
