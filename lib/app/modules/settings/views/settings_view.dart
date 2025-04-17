@@ -290,6 +290,11 @@ class SettingsView extends GetView<SettingsController> {
                   max: 32,
                   divisions: 20,
                   label: currentSize.toStringAsFixed(1),
+                  activeColor: appGreenLight2, // Warna garis yang sudah dipilih
+                  secondaryActiveColor: appGreenLight2,
+                  inactiveColor: appGrey, // Warna garis yang belum dipilih
+                  thumbColor:
+                      appGreenLight2, // Kalau pakai Flutter versi baru (Flutter 3+)
                   onChanged: (value) {
                     setState(() {
                       currentSize = value;
@@ -302,7 +307,10 @@ class SettingsView extends GetView<SettingsController> {
                   children: [
                     TextButton(
                       onPressed: () => Get.back(),
-                      child: Text("Cancel"),
+                      child: Text(
+                        "Cancel",
+                        style: GoogleFonts.nunito(color: appGreenDark),
+                      ),
                     ),
                     SizedBox(width: 8),
                     ElevatedButton(
@@ -318,7 +326,10 @@ class SettingsView extends GetView<SettingsController> {
                         await controller.saveSettings();
                         Get.back();
                       },
-                      child: Text("Save"),
+                      child: Text(
+                        "Save",
+                        style: GoogleFonts.nunito(color: appWhite),
+                      ),
                     ),
                   ],
                 ),

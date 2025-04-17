@@ -173,7 +173,9 @@ class HomeView extends GetView<HomeController> {
                                           onPressed: () => Get.back(),
                                           child: Text(
                                             "Cancel",
-                                            style: GoogleFonts.nunito(),
+                                            style: GoogleFonts.nunito(
+                                              color: appGreenLight2,
+                                            ),
                                           ),
                                         ),
                                         TextButton(
@@ -639,7 +641,9 @@ class HomeView extends GetView<HomeController> {
                                                 onPressed: () => Get.back(),
                                                 child: Text(
                                                   "Cancel",
-                                                  style: GoogleFonts.nunito(),
+                                                  style: GoogleFonts.nunito(
+                                                    color: appGreenLight2,
+                                                  ),
                                                 ),
                                               ),
                                               TextButton(

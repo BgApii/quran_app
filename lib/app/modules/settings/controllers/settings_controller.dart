@@ -51,7 +51,7 @@ class SettingsController extends GetxController {
     );
 
     // Apply theme mode
-    Get.changeThemeMode(ThemeMode.light);
+    Get.changeThemeMode(ThemeMode.dark);
 
     // Save the reset settings
     await saveSettings();

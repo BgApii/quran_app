@@ -7,7 +7,6 @@ import 'package:quran/app/modules/home/controllers/home_controller.dart';
 import 'package:quran/app/modules/settings/controllers/settings_controller.dart';
 import 'package:quran/app/data/models/detail_surah.dart';
 import 'package:quran/app/data/models/meta.dart';
-import 'package:quran/app/routes/app_pages.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 
 import '../controllers/detail_surah_controller.dart';

@@ -3,10 +3,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quran/app/constant/color.dart';
 import 'package:quran/app/modules/home/controllers/home_controller.dart';
-import 'package:quran/app/modules/home/views/home_view.dart';
 import 'package:quran/app/modules/settings/controllers/settings_controller.dart';
 import 'package:quran/app/data/models/detail_juz.dart';
-import 'package:quran/app/routes/app_pages.dart';
 import '../controllers/detail_juz_controller.dart';
 
 class DetailJuzView extends GetView<DetailJuzController> {
