@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
-import 'package:quran/app/constant/color.dart';
 import 'package:quran/app/data/db/bookmark.dart';
 import 'package:quran/app/modules/settings/controllers/settings_controller.dart';
 import 'package:quran/app/data/models/detail_surah.dart';
@@ -98,31 +97,19 @@ class DetailSurahController extends GetxController {
         });
         Get.back();
         if (lastRead) {
-          Get.snackbar(
-            "Berhasil",
-            "Berhasil menyimpan Terakhir dibaca",
-            backgroundColor: appWhite,
-          );
+          Get.snackbar("Berhasil", "Berhasil menyimpan Terakhir dibaca");
         } else {
-          Get.snackbar(
-            "Berhasil",
-            "Berhasil menyimpan bookmark",
-            backgroundColor: appWhite,
-          );
+          Get.snackbar("Berhasil", "Berhasil menyimpan bookmark");
         }
       } else {
         Get.back();
-        Get.snackbar("Gagal", "Bookmark sudah ada", backgroundColor: appWhite);
+        Get.snackbar("Gagal", "Bookmark sudah ada");
       }
 
       var data = await db.query("bookmarks");
       print(data);
     } catch (e) {
-      Get.snackbar(
-        "Gagal",
-        "Gagal menyimpan bookmark: $e",
-        backgroundColor: appWhite,
-      );
+      Get.snackbar("Gagal", "Gagal menyimpan bookmark: $e");
       print("Error inserting bookmark: $e");
     }
   }
@@ -161,7 +148,7 @@ class DetailSurahController extends GetxController {
         'ar.alafasy';
 
     String url =
-        "https://cdn.islamic.network/quran/audio/128/$audioEdition/$id.mp3";
+        "https://cdn.islamic.network/quran/audio/64/$audioEdition/$id.mp3";
 
     if (id != null) {
       try {

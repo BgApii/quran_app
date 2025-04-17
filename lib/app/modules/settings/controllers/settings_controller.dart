@@ -7,15 +7,15 @@ import 'package:flutter/material.dart';
 
 class SettingsController extends GetxController {
   // Settings variables
-  RxDouble arabicFontSize = 23.0.obs;
-  RxDouble translationFontSize = 16.0.obs;
-  RxDouble transliterationFontSize = 16.0.obs;
+  RxDouble arabicFontSize = 30.0.obs;
+  RxDouble translationFontSize = 20.0.obs;
+  RxDouble transliterationFontSize = 20.0.obs;
   RxBool isTransliterationEnabled = false.obs;
   RxBool isTranslationEnabled = true.obs;
   Rx<Edition?> selectedTranslation = Rx<Edition?>(null);
   Rx<Edition?> selectedAudioEdition = Rx<Edition?>(null);
   RxList<Edition> audioEditions = <Edition>[].obs;
-  RxBool isDarkMode = false.obs;
+  RxBool isDarkMode = true.obs;
 
   // Available translations list
   RxList<Edition> translations = <Edition>[].obs;
@@ -30,14 +30,13 @@ class SettingsController extends GetxController {
 
   // Add this to your SettingsController
   Future<void> resetSettings() async {
-
     // Reset all settings to default values
-    arabicFontSize.value = 23.0;
-    translationFontSize.value = 16.0;
-    transliterationFontSize.value = 16.0;
+    arabicFontSize.value = 30.0;
+    translationFontSize.value = 20.0;
+    transliterationFontSize.value = 20.0;
     isTransliterationEnabled.value = false;
     isTranslationEnabled.value = true;
-    isDarkMode.value = false;
+    isDarkMode.value = true;
 
     // Reset to default translations
     selectedTranslation.value = translations.firstWhere(
@@ -62,14 +61,14 @@ class SettingsController extends GetxController {
   Future<void> loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
 
-    arabicFontSize.value = prefs.getDouble('arabicFontSize') ?? 23.0;
-    translationFontSize.value = prefs.getDouble('translationFontSize') ?? 16.0;
+    arabicFontSize.value = prefs.getDouble('arabicFontSize') ?? 30.0;
+    translationFontSize.value = prefs.getDouble('translationFontSize') ?? 20.0;
     transliterationFontSize.value =
-        prefs.getDouble('transliterationFontSize') ?? 16.0;
+        prefs.getDouble('transliterationFontSize') ?? 20.0;
     isTransliterationEnabled.value =
         prefs.getBool('isTransliterationEnabled') ?? false;
     isTranslationEnabled.value = prefs.getBool('isTranslationEnabled') ?? true;
-    isDarkMode.value = prefs.getBool('isDarkMode') ?? false;
+    isDarkMode.value = prefs.getBool('isDarkMode') ?? true;
 
     // Load selected translation
     final translationJson = prefs.getString('selectedTranslation');

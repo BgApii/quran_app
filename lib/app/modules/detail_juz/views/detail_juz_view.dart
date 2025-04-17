@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:quran/app/constant/color.dart';
 import 'package:quran/app/modules/home/controllers/home_controller.dart';
+import 'package:quran/app/modules/home/views/home_view.dart';
 import 'package:quran/app/modules/settings/controllers/settings_controller.dart';
 import 'package:quran/app/data/models/detail_juz.dart';
+import 'package:quran/app/routes/app_pages.dart';
 import '../controllers/detail_juz_controller.dart';
 
 class DetailJuzView extends GetView<DetailJuzController> {
@@ -17,10 +20,10 @@ class DetailJuzView extends GetView<DetailJuzController> {
       appBar: AppBar(
         title: Text(
           "Juz $juzNumber",
-          style: TextStyle(
+          style: GoogleFonts.nunito(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF206B3A),
+            color: Get.isDarkMode ? appGreenLight2 : appGreenDark,
           ),
         ),
       ),
@@ -28,11 +31,42 @@ class DetailJuzView extends GetView<DetailJuzController> {
         future: controller.getDetailJuz(juzNumber),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return Center(
+              child: CircularProgressIndicator(
+                color: Get.isDarkMode ? appGreenLight : appGreenDark,
+              ),
+            );
           }
 
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text("Tidak ada data!"));
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Gagal memuat data!", style: GoogleFonts.nunito()),
+                  SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          Get.isDarkMode ? appGreenLight : appGreenDark,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Text(
+                      "Back",
+                      style: GoogleFonts.nunito(
+                        color: appWhite,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
           }
 
           final data = snapshot.data!;
@@ -41,13 +75,28 @@ class DetailJuzView extends GetView<DetailJuzController> {
           final translation = data['translation'];
 
           if (arab == null) {
-            return Center(child: Text("Data Arab tidak tersedia"));
+            return Center(
+              child: Text(
+                "Data Arab tidak tersedia",
+                style: GoogleFonts.nunito(),
+              ),
+            );
           }
           if (latin == null) {
-            return Center(child: Text("Data Latin tidak tersedia"));
+            return Center(
+              child: Text(
+                "Data Latin tidak tersedia",
+                style: GoogleFonts.nunito(),
+              ),
+            );
           }
           if (translation == null) {
-            return Center(child: Text("Data Terjemahan tidak tersedia"));
+            return Center(
+              child: Text(
+                "Data Terjemahan tidak tersedia",
+                style: GoogleFonts.nunito(),
+              ),
+            );
           }
 
           return ListView.builder(
@@ -96,70 +145,67 @@ class DetailJuzView extends GetView<DetailJuzController> {
                       ),
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    child: Material(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(15),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(15),
-                        onTap: () {},
-                        child: Stack(
-                          children: [
-                            Positioned(
-                              bottom: 0,
-                              right: 10,
-                              child: Opacity(
-                                opacity: 0.3,
-                                child: Image.asset(
-                                  "assets/images/quran.png",
-                                  width: 150,
-                                  height: 150,
-                                  fit: BoxFit.cover,
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          bottom: 0,
+                          right: 10,
+                          child: Opacity(
+                            opacity: 0.3,
+                            child: Image.asset(
+                              "assets/images/quran.png",
+                              width: 150,
+                              height: 150,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(24.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                "${arabAyah.surah?.englishName ?? ''}",
+                                style: GoogleFonts.nunito(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(24.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "${arabAyah.surah?.englishName ?? ''}",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  Text(
-                                    "(${arabAyah.surah?.englishNameTranslation ?? ''})",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  Divider(indent: 70, endIndent: 70),
-                                  Text(
-                                    "${arabAyah.surah?.numberOfAyahs} Ayat | ${arabAyah.surah?.revelationType}",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  SizedBox(height: 10),
-                                  if (hasBismillah)
-                                    Text(
-                                      "بِسْمِ اللَّهِ الرَّحْمَـٰنِ الرَّحِيمِ",
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                ],
+                              Text(
+                                "(${arabAyah.surah?.englishNameTranslation ?? ''})",
+                                style: GoogleFonts.nunito(
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
-                          ],
+                              Divider(
+                                indent: 70,
+                                endIndent: 70,
+                                color: appWhite,
+                              ),
+                              Text(
+                                "${arabAyah.surah?.numberOfAyahs} Ayat | ${arabAyah.surah?.revelationType}",
+                                style: GoogleFonts.nunito(
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              if (hasBismillah)
+                                Image.asset(
+                                  "assets/images/bismillah.png",
+                                  width: 200, // Set the desired width
+                                  height: 50, // Set the desired height
+                                  fit:
+                                      BoxFit
+                                          .contain, // Adjust the fit as needed
+                                ),
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                 );
@@ -175,8 +221,10 @@ class DetailJuzView extends GetView<DetailJuzController> {
                   child: Text(
                     cleanedArabicText,
                     textAlign: TextAlign.right,
-                    style: TextStyle(
+                    style: GoogleFonts.scheherazadeNew(
                       fontSize: settingsController.arabicFontSize.value,
+                      height: 2,
+                      letterSpacing: 0.5,
                     ),
                   ),
                 ),
@@ -185,10 +233,10 @@ class DetailJuzView extends GetView<DetailJuzController> {
                   Text(
                     latinAyah.text ?? '',
                     textAlign: TextAlign.left,
-                    style: TextStyle(
+                    style: GoogleFonts.nunito(
                       fontSize:
                           settingsController.transliterationFontSize.value,
-                      color: Color(0xFF206B3A),
+                      color: appGreenDark,
                     ),
                   ),
                 if (settingsController.isTransliterationEnabled.value)
@@ -197,12 +245,16 @@ class DetailJuzView extends GetView<DetailJuzController> {
                   Text(
                     indoAyah.text ?? '',
                     textAlign: TextAlign.left,
-                    style: TextStyle(
+                    style: GoogleFonts.nunito(
                       fontSize: settingsController.translationFontSize.value,
                     ),
                   ),
-                SizedBox(height: 8),
-                Card(
+                SizedBox(height: 16),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Get.isDarkMode ? Color(0xFF2C2C2C) : appWhiteLight,
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       vertical: 8.0,
@@ -211,7 +263,25 @@ class DetailJuzView extends GetView<DetailJuzController> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CircleAvatar(child: Text("${arabAyah.numberInSurah}")),
+                        Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage(
+                                Get.isDarkMode
+                                    ? "assets/images/list_dark.png"
+                                    : "assets/images/list_light.png",
+                              ),
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              "${arabAyah.numberInSurah}",
+                              style: GoogleFonts.nunito(),
+                            ),
+                          ),
+                        ),
                         Obx(
                           () => Row(
                             children: [
@@ -220,7 +290,10 @@ class DetailJuzView extends GetView<DetailJuzController> {
                                 onPressed: () {
                                   Get.defaultDialog(
                                     title: "BOOKMARK",
+                                    titleStyle: GoogleFonts.nunito(),
                                     middleText: "Pilih jenis bookmark",
+                                    middleTextStyle: GoogleFonts.nunito(),
+                                    contentPadding: EdgeInsets.all(24),
                                     actions: [
                                       ElevatedButton(
                                         onPressed: () async {
@@ -232,12 +305,11 @@ class DetailJuzView extends GetView<DetailJuzController> {
                                           );
                                           homeC.update();
                                         },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: appGreenDark,
-                                        ),
                                         child: Text(
                                           "Last Read",
-                                          style: TextStyle(color: Colors.white),
+                                          style: GoogleFonts.nunito(
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
                                       ElevatedButton(
@@ -251,13 +323,15 @@ class DetailJuzView extends GetView<DetailJuzController> {
                                         },
                                         child: Text(
                                           "Bookmark",
-                                          style: TextStyle(color: Colors.white),
+                                          style: GoogleFonts.nunito(
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
                                     ],
                                   );
                                 },
-                                icon: Icon(Icons.bookmark_outline),
+                                icon: Icon(Icons.bookmark_add_rounded),
                               ),
                               // Play, Pause, Resume, or Stop Icon
                               if (controller.currentPlayingAyah.value ==
@@ -267,7 +341,7 @@ class DetailJuzView extends GetView<DetailJuzController> {
                                   onPressed: () {
                                     controller.pauseAudio();
                                   },
-                                  icon: Icon(Icons.pause),
+                                  icon: Icon(Icons.pause_circle_rounded),
                                 )
                               else if (controller.currentPlayingAyah.value ==
                                       arabAyah.number &&
@@ -276,7 +350,7 @@ class DetailJuzView extends GetView<DetailJuzController> {
                                   onPressed: () {
                                     controller.resumeAudio();
                                   },
-                                  icon: Icon(Icons.play_arrow),
+                                  icon: Icon(Icons.play_circle_rounded),
                                 )
                               else
                                 IconButton(
@@ -286,7 +360,7 @@ class DetailJuzView extends GetView<DetailJuzController> {
                                       arabAyah.number!,
                                     );
                                   },
-                                  icon: Icon(Icons.play_arrow),
+                                  icon: Icon(Icons.play_circle_rounded),
                                 ),
                               // Stop Icon
                               if (controller.currentPlayingAyah.value ==
@@ -295,7 +369,7 @@ class DetailJuzView extends GetView<DetailJuzController> {
                                   onPressed: () {
                                     controller.stopAudio();
                                   },
-                                  icon: Icon(Icons.stop),
+                                  icon: Icon(Icons.stop_circle_rounded),
                                 ),
                             ],
                           ),

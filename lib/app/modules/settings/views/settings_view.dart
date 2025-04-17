@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:quran/app/constant/color.dart';
 import '../controllers/settings_controller.dart';
 
@@ -12,10 +13,10 @@ class SettingsView extends GetView<SettingsController> {
       appBar: AppBar(
         title: Text(
           "Settings",
-          style: TextStyle(
+          style: GoogleFonts.nunito(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF206B3A),
+            color: Get.isDarkMode ? appGreenLight2 : appGreenDark,
           ),
         ),
       ),
@@ -24,7 +25,10 @@ class SettingsView extends GetView<SettingsController> {
           // Arabic Settings
           Padding(
             padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-            child: Text("Arabic"),
+            child: Text(
+              "Arabic",
+              style: GoogleFonts.nunito(color: appGreenDark),
+            ),
           ),
           Container(
             decoration: BoxDecoration(
@@ -40,9 +44,12 @@ class SettingsView extends GetView<SettingsController> {
             ),
             child: ListTile(
               onTap: () => _showFontSizeBottomSheet(true, false, false),
-              title: Text("Font Size"),
+              title: Text("Font Size", style: GoogleFonts.nunito()),
               subtitle: Obx(
-                () => Text("Current: ${controller.arabicFontSize.value}"),
+                () => Text(
+                  "Current: ${controller.arabicFontSize.value}",
+                  style: GoogleFonts.nunito(),
+                ),
               ),
             ),
           ),
@@ -50,14 +57,25 @@ class SettingsView extends GetView<SettingsController> {
           // Transliteration Settings
           Padding(
             padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-            child: Text("Transliteration"),
+            child: Text(
+              "Transliteration",
+              style: GoogleFonts.nunito(color: appGreenDark),
+            ),
           ),
           Obx(
             () => SwitchListTile(
               onChanged: controller.toggleTransliteration,
-              title: Text("Enable Transliteration"),
-              subtitle: Text("Show transliteration text"),
+              title: Text(
+                "Enable Transliteration",
+                style: GoogleFonts.nunito(),
+              ),
+              subtitle: Text(
+                "Show transliteration text",
+                style: GoogleFonts.nunito(),
+              ),
               value: controller.isTransliterationEnabled.value,
+              activeColor: appGreenDark,
+              inactiveThumbColor: appGrey,
             ),
           ),
           Container(
@@ -74,10 +92,11 @@ class SettingsView extends GetView<SettingsController> {
             ),
             child: ListTile(
               onTap: () => _showFontSizeBottomSheet(false, true, false),
-              title: Text("Font Size"),
+              title: Text("Font Size", style: GoogleFonts.nunito()),
               subtitle: Obx(
                 () => Text(
                   "Current: ${controller.transliterationFontSize.value}",
+                  style: GoogleFonts.nunito(),
                 ),
               ),
             ),
@@ -86,22 +105,31 @@ class SettingsView extends GetView<SettingsController> {
           // Translation Settings
           Padding(
             padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-            child: Text("Translations"),
+            child: Text(
+              "Translations",
+              style: GoogleFonts.nunito(color: appGreenDark),
+            ),
           ),
           Obx(
             () => SwitchListTile(
               onChanged: controller.toggleTranslation,
-              title: Text("Enable Translation"),
-              subtitle: Text("Show translation text"),
+              title: Text("Enable Translation", style: GoogleFonts.nunito()),
+              subtitle: Text(
+                "Show translation text",
+                style: GoogleFonts.nunito(),
+              ),
               value: controller.isTranslationEnabled.value,
+              activeColor: appGreenDark,
+              inactiveThumbColor: appGrey,
             ),
           ),
           Obx(
             () => ListTile(
               onTap: () => _showTranslationSelector(),
-              title: Text("Select Language"),
+              title: Text("Select Language", style: GoogleFonts.nunito()),
               subtitle: Text(
                 controller.selectedTranslation.value?.name ?? "Not selected",
+                style: GoogleFonts.nunito(),
               ),
             ),
           ),
@@ -119,9 +147,12 @@ class SettingsView extends GetView<SettingsController> {
             ),
             child: ListTile(
               onTap: () => _showFontSizeBottomSheet(false, false, true),
-              title: Text("Font Size"),
+              title: Text("Font Size", style: GoogleFonts.nunito()),
               subtitle: Obx(
-                () => Text("Current: ${controller.translationFontSize.value}"),
+                () => Text(
+                  "Current: ${controller.translationFontSize.value}",
+                  style: GoogleFonts.nunito(),
+                ),
               ),
             ),
           ),
@@ -129,7 +160,10 @@ class SettingsView extends GetView<SettingsController> {
           // Audio Settings
           Padding(
             padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-            child: Text("Audio"),
+            child: Text(
+              "Audio",
+              style: GoogleFonts.nunito(color: appGreenDark),
+            ),
           ),
           Obx(
             () => Container(
@@ -146,10 +180,11 @@ class SettingsView extends GetView<SettingsController> {
               ),
               child: ListTile(
                 onTap: () => _showAudioEditionSelector(),
-                title: Text("Select Reciter"),
+                title: Text("Select Reciter", style: GoogleFonts.nunito()),
                 subtitle: Text(
                   controller.selectedAudioEdition.value?.englishName ??
                       "Not selected",
+                  style: GoogleFonts.nunito(),
                 ),
               ),
             ),
@@ -158,37 +193,52 @@ class SettingsView extends GetView<SettingsController> {
           // General Settings
           Padding(
             padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-            child: Text("General"),
+            child: Text(
+              "General",
+              style: GoogleFonts.nunito(color: appGreenDark),
+            ),
           ),
+
           Obx(
-            () => SwitchListTile(
-              onChanged: controller.toggleDarkMode,
-              title: Text("Dark Mode"),
-              subtitle: Text("Enable dark theme"),
-              value: controller.isDarkMode.value,
+            () => Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color:
+                        Get.isDarkMode
+                            ? appGreyLight.withOpacity(0.1)
+                            : appGrey.withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: SwitchListTile(
+                onChanged: controller.toggleDarkMode,
+                title: Text("Dark Mode", style: GoogleFonts.nunito()),
+                subtitle: Text(
+                  "Enable dark theme",
+                  style: GoogleFonts.nunito(),
+                ),
+                value: controller.isDarkMode.value,
+                activeColor: appGreenDark,
+                inactiveThumbColor: appGrey,
+              ),
             ),
           ),
           // Add this to your SettingsView's ListView children, after the General section
           Padding(
             padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-            child: Text("Reset"),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color:
-                      Get.isDarkMode
-                          ? appGreyLight.withOpacity(0.1)
-                          : appGrey.withOpacity(0.3),
-                  width: 1,
-                ),
-              ),
+            child: Text(
+              "Reset",
+              style: GoogleFonts.nunito(color: appGreenDark),
             ),
-            child: ListTile(
-              onTap: () => _showResetConfirmation(),
-              title: Text("Reset All Settings"),
-              subtitle: Text("Restore all settings to default values"),
+          ),
+          ListTile(
+            onTap: () => _showResetConfirmation(),
+            title: Text("Reset All Settings", style: GoogleFonts.nunito()),
+            subtitle: Text(
+              "Restore all settings to default values",
+              style: GoogleFonts.nunito(),
             ),
           ),
         ],
@@ -296,7 +346,10 @@ class SettingsView extends GetView<SettingsController> {
           children: [
             Text(
               "Select Reciter",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: GoogleFonts.nunito(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             SizedBox(height: 16),
             Padding(
@@ -305,6 +358,7 @@ class SettingsView extends GetView<SettingsController> {
                 controller: searchController,
                 decoration: InputDecoration(
                   hintText: 'Search reciters...',
+                  hintStyle: GoogleFonts.nunito(),
                   prefixIcon: Icon(Icons.search),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -332,8 +386,14 @@ class SettingsView extends GetView<SettingsController> {
                   itemBuilder: (context, index) {
                     final edition = filteredEditions[index];
                     return ListTile(
-                      title: Text(edition.englishName ?? 'Unknown'),
-                      subtitle: Text(edition.language ?? 'Unknown'),
+                      title: Text(
+                        edition.englishName ?? 'Unknown',
+                        style: GoogleFonts.nunito(),
+                      ),
+                      subtitle: Text(
+                        edition.language ?? 'Unknown',
+                        style: GoogleFonts.nunito(),
+                      ),
                       trailing:
                           controller.selectedAudioEdition.value?.identifier ==
                                   edition.identifier
@@ -357,23 +417,26 @@ class SettingsView extends GetView<SettingsController> {
   void _showResetConfirmation() {
     Get.dialog(
       AlertDialog(
-        title: Text("Reset Settings"),
+        title: Text("Reset Settings", style: GoogleFonts.nunito()),
         content: Text(
           "Are you sure you want to reset all settings to default values?",
+          style: GoogleFonts.nunito(),
         ),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: Text("Cancel")),
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              "Cancel",
+              style: GoogleFonts.nunito(color: appGreenLight2),
+            ),
+          ),
           TextButton(
             onPressed: () async {
               await controller.resetSettings();
               Get.back();
-              Get.snackbar(
-                "Success",
-                "All settings have been reset",
-                snackPosition: SnackPosition.BOTTOM,
-              );
+              Get.snackbar("Success", "All settings have been reset");
             },
-            child: Text("Reset", style: TextStyle(color: Colors.red)),
+            child: Text("Reset", style: GoogleFonts.nunito(color: Colors.red)),
           ),
         ],
       ),
@@ -396,7 +459,10 @@ class SettingsView extends GetView<SettingsController> {
           children: [
             Text(
               "Select Translation",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: GoogleFonts.nunito(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             SizedBox(height: 16),
             Padding(
@@ -405,6 +471,7 @@ class SettingsView extends GetView<SettingsController> {
                 controller: searchController,
                 decoration: InputDecoration(
                   hintText: 'Search translations...',
+                  hintStyle: GoogleFonts.nunito(),
                   prefixIcon: Icon(Icons.search),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -432,8 +499,14 @@ class SettingsView extends GetView<SettingsController> {
                   itemBuilder: (context, index) {
                     final translation = filteredTranslations[index];
                     return ListTile(
-                      title: Text(translation.englishName ?? 'Unknown'),
-                      subtitle: Text(translation.language ?? 'Unknown'),
+                      title: Text(
+                        translation.englishName ?? 'Unknown',
+                        style: GoogleFonts.nunito(),
+                      ),
+                      subtitle: Text(
+                        translation.language ?? 'Unknown',
+                        style: GoogleFonts.nunito(),
+                      ),
                       trailing:
                           controller.selectedTranslation.value?.identifier ==
                                   translation.identifier

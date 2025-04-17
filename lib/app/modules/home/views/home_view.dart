@@ -4,8 +4,28 @@ import 'package:get/get.dart';
 import 'package:quran/app/routes/app_pages.dart';
 import 'package:quran/app/constant/color.dart';
 import 'package:quran/app/data/models/meta.dart';
-
+import 'package:google_fonts/google_fonts.dart';
 import '../controllers/home_controller.dart';
+
+class KeepAliveWrapper extends StatefulWidget {
+  final Widget child;
+  const KeepAliveWrapper({Key? key, required this.child}) : super(key: key);
+
+  @override
+  _KeepAliveWrapperState createState() => _KeepAliveWrapperState();
+}
+
+class _KeepAliveWrapperState extends State<KeepAliveWrapper>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return widget.child;
+  }
+}
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
@@ -25,7 +45,7 @@ class HomeView extends GetView<HomeController> {
         ],
         title: Text(
           "Al-Quran App",
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+          style: GoogleFonts.nunito(
             fontSize: 20,
             fontWeight: FontWeight.bold,
             color: Get.isDarkMode ? appGreenLight2 : appGreenDark,
@@ -41,7 +61,7 @@ class HomeView extends GetView<HomeController> {
             children: [
               Text(
                 "Assalamu'alaikum,",
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                style: GoogleFonts.nunito(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Get.isDarkMode ? appGreyLight : appGrey,
@@ -95,7 +115,7 @@ class HomeView extends GetView<HomeController> {
                                           SizedBox(width: 10),
                                           Text(
                                             "Last Read",
-                                            style: TextStyle(
+                                            style: GoogleFonts.nunito(
                                               fontSize: 12,
                                               color: appWhite,
                                             ),
@@ -105,20 +125,14 @@ class HomeView extends GetView<HomeController> {
                                       SizedBox(height: 20),
                                       Text(
                                         "Loading...",
-                                        style: TextStyle(
+                                        style: GoogleFonts.nunito(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
                                           color: appWhite,
                                         ),
                                       ),
                                       // SizedBox(height: 3),
-                                      Text(
-                                        "",
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: appWhite,
-                                        ),
-                                      ),
+                                      Text(""),
                                     ],
                                   ),
                                 ),
@@ -144,32 +158,47 @@ class HomeView extends GetView<HomeController> {
                               borderRadius: BorderRadius.circular(15),
                               onLongPress: () {
                                 if (lastRead != null) {
-                                  Get.defaultDialog(
-                                    title: "Delete Last Read",
-                                    middleText:
-                                        "Are you sure to delete last read bookmark?",
-                                    actions: [
-                                      OutlinedButton(
-                                        onPressed: () => Get.back(),
-                                        child: Text("CANCEL"),
+                                  Get.dialog(
+                                    AlertDialog(
+                                      title: Text(
+                                        "Delete Last Read",
+                                        style: GoogleFonts.nunito(),
                                       ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          controller.deleteBookmark(
-                                            lastRead['id'],
-                                          );
-                                          Get.back();
-                                        },
-                                        child: Text("DELETE"),
+                                      content: Text(
+                                        "Are you sure you want to delete this last read?",
+                                        style: GoogleFonts.nunito(),
                                       ),
-                                    ],
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Get.back(),
+                                          child: Text(
+                                            "Cancel",
+                                            style: GoogleFonts.nunito(),
+                                          ),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            controller.deleteBookmark(
+                                              lastRead['id'],
+                                            );
+                                            Get.back();
+                                            Get.snackbar(
+                                              "Success",
+                                              "Last read have been deleted",
+                                            );
+                                          },
+                                          child: Text(
+                                            "Delete",
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   );
                                 }
                               },
-                              // Di dalam HomeView, pada bagian Last Read Container
                               onTap: () {
                                 if (lastRead != null) {
-                                  // Navigasi ke surah
                                   controller.navigateToBookmark(lastRead);
                                 }
                               },
@@ -204,7 +233,7 @@ class HomeView extends GetView<HomeController> {
                                             SizedBox(width: 10),
                                             Text(
                                               "Last Read",
-                                              style: TextStyle(
+                                              style: GoogleFonts.nunito(
                                                 fontSize: 12,
                                                 color: appWhite,
                                               ),
@@ -215,9 +244,9 @@ class HomeView extends GetView<HomeController> {
 
                                         Text(
                                           lastRead == null
-                                              ? "Tambahkan Last Read"
+                                              ? "Add Last Read"
                                               : "${lastRead["surah"]}",
-                                          style: TextStyle(
+                                          style: GoogleFonts.nunito(
                                             fontSize: 20,
                                             fontWeight: FontWeight.bold,
                                             color: appWhite,
@@ -226,9 +255,9 @@ class HomeView extends GetView<HomeController> {
                                         // SizedBox(height: 3),
                                         Text(
                                           lastRead == null
-                                              ? "Belum ada Last Read"
+                                              ? "No Last Read"
                                               : "Verse ${lastRead["ayah"]} | Juz ${lastRead["juz"]}",
-                                          style: TextStyle(
+                                          style: GoogleFonts.nunito(
                                             fontSize: 12,
                                             color: appWhite,
                                           ),
@@ -254,7 +283,7 @@ class HomeView extends GetView<HomeController> {
                   Tab(
                     child: Text(
                       "Surah",
-                      style: TextStyle(
+                      style: GoogleFonts.nunito(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -263,7 +292,7 @@ class HomeView extends GetView<HomeController> {
                   Tab(
                     child: Text(
                       "Juz",
-                      style: TextStyle(
+                      style: GoogleFonts.nunito(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -272,7 +301,7 @@ class HomeView extends GetView<HomeController> {
                   Tab(
                     child: Text(
                       "Bookmark",
-                      style: TextStyle(
+                      style: GoogleFonts.nunito(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -283,176 +312,79 @@ class HomeView extends GetView<HomeController> {
               Expanded(
                 child: TabBarView(
                   children: [
-                    FutureBuilder<Surahs?>(
-                      future: controller.getAllSurah(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(child: CircularProgressIndicator());
-                        }
-                        if (!snapshot.hasData) {
-                          return Center(child: Text("Tidak ada data!"));
-                        }
-                        return ListView.builder(
-                          itemCount: snapshot.data!.references!.length,
-                          itemBuilder: (context, index) {
-                            References surah =
-                                snapshot.data!.references![index];
-                            return Container(
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color:
-                                        Get.isDarkMode
-                                            ? appGreyLight.withOpacity(0.1)
-                                            : appGrey.withOpacity(0.1),
-                                    width: 1,
-                                  ),
-                                ),
+                    KeepAliveWrapper(
+                      child: FutureBuilder<Surahs?>(
+                        future: controller.getAllSurah(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                color:
+                                    Get.isDarkMode
+                                        ? appGreenLight
+                                        : appGreenDark,
                               ),
-                              child: ListTile(
-                                onTap: () {
-                                  Get.toNamed(
-                                    Routes.DETAIL_SURAH,
-                                    arguments: surah,
-                                  );
-                                },
-                                leading: Container(
-                                  height: 40,
-                                  width: 40,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                        Get.isDarkMode
-                                            ? "assets/images/list_dark.png"
-                                            : "assets/images/list_light.png",
+                            );
+                          }
+                          if (!snapshot.hasData) {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Tidak ada data!",
+                                    style: GoogleFonts.nunito(),
+                                  ),
+                                  SizedBox(height: 10),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Get.offAllNamed(Routes.HOME);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          Get.isDarkMode
+                                              ? appGreenLight
+                                              : appGreenDark,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      "Refresh",
+                                      style: GoogleFonts.nunito(
+                                        color: appWhite,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ),
-                                  child: Center(child: Text("${surah.number}")),
-                                ),
-                                title: Text(
-                                  "${surah.englishName}",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  "${surah.numberOfAyahs} Verse | ${surah.revelationType}",
-                                  style: TextStyle(
-                                    color:
-                                        Get.isDarkMode ? appGreyLight : appGrey,
-                                  ),
-                                ),
-                                trailing: Text(
-                                  "${surah.name}",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
-                                ),
+                                ],
                               ),
                             );
-                          },
-                        );
-                      },
-                    ),
-                    FutureBuilder<Juzs?>(
-                      future: controller.getAllJuz(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(child: CircularProgressIndicator());
-                        }
-                        if (!snapshot.hasData ||
-                            snapshot.data?.references == null) {
-                          return Center(child: Text("Tidak ada data!"));
-                        }
-                        return ListView.builder(
-                          itemCount: snapshot.data!.references!.length,
-                          itemBuilder: (context, index) {
-                            juzReferences juz =
-                                snapshot.data!.references![index];
-                            String surahName = controller.getSurahName(
-                              juz.surah ?? 0,
-                            );
-                            return Container(
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color:
-                                        Get.isDarkMode
-                                            ? appGreyLight.withOpacity(0.1)
-                                            : appGrey.withOpacity(0.1),
-                                    width: 1,
-                                  ),
-                                ),
-                              ),
-                              child: ListTile(
-                                onTap: () {
-                                  Get.toNamed(
-                                    Routes.DETAIL_JUZ,
-                                    arguments: index,
-                                  );
-                                },
-                                leading: Container(
-                                  height: 40,
-                                  width: 40,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                        Get.isDarkMode
-                                            ? "assets/images/list_dark.png"
-                                            : "assets/images/list_light.png",
-                                      ),
+                          }
+                          return ListView.builder(
+                            itemCount: snapshot.data!.references!.length,
+                            itemBuilder: (context, index) {
+                              References surah =
+                                  snapshot.data!.references![index];
+                              return Container(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color:
+                                          Get.isDarkMode
+                                              ? appGreyLight.withOpacity(0.1)
+                                              : appGrey.withOpacity(0.1),
+                                      width: 1,
                                     ),
                                   ),
-                                  child: Center(child: Text("${index + 1}")),
                                 ),
-                                title: Text(
-                                  "Juz ${index + 1}",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  "Start $surahName : ${juz.ayah}",
-                                  style: TextStyle(
-                                    color:
-                                        Get.isDarkMode ? appGreyLight : appGrey,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                    GetBuilder<HomeController>(
-                      builder: (c) {
-                        return FutureBuilder(
-                          future: controller.getBookmark(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Center(child: CircularProgressIndicator());
-                            }
-
-                            if (snapshot.data?.isEmpty ?? true) {
-                              return Center(child: Text("Tidak ada Bookmark!"));
-                            }
-
-                            return ListView.builder(
-                              itemCount: snapshot.data?.length ?? 0,
-                              itemBuilder: (context, index) {
-                                Map<String, dynamic> data =
-                                    snapshot.data![index];
-                                return ListTile(
-                                  // Di HomeView, pada bagian Bookmark tab
+                                child: ListTile(
                                   onTap: () {
-                                    controller.navigateToBookmark(data);
+                                    Get.toNamed(
+                                      Routes.DETAIL_SURAH,
+                                      arguments: surah,
+                                    );
                                   },
                                   leading: Container(
                                     height: 40,
@@ -466,27 +398,279 @@ class HomeView extends GetView<HomeController> {
                                         ),
                                       ),
                                     ),
-                                    child: Center(child: Text("${index + 1}")),
+                                    child: Center(
+                                      child: Text(
+                                        "${surah.number}",
+                                        style: GoogleFonts.nunito(),
+                                      ),
+                                    ),
                                   ),
-                                  // leading: Text("${index + 1}"),
-                                  title: Text("${data["surah"]}"),
+                                  title: Text(
+                                    "${surah.englishName}",
+                                    style: GoogleFonts.nunito(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
                                   subtitle: Text(
-                                    "Verse ${data["ayah"]} | Juz ${data["juz"]}",
-                                    style: TextStyle(
+                                    "${surah.numberOfAyahs} Verse | ${surah.revelationType}",
+                                    style: GoogleFonts.nunito(
                                       color:
                                           Get.isDarkMode
                                               ? appGreyLight
                                               : appGrey,
                                     ),
                                   ),
-                                  trailing: IconButton(
+                                  trailing: Text(
+                                    "${surah.name}",
+                                    style: GoogleFonts.scheherazadeNew(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    KeepAliveWrapper(
+                      child: FutureBuilder<Juzs?>(
+                        future: controller.getAllJuz(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                          if (!snapshot.hasData ||
+                              snapshot.data?.references == null) {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Tidak ada data!",
+                                    style: GoogleFonts.nunito(),
+                                  ),
+                                  SizedBox(height: 10),
+                                  ElevatedButton(
                                     onPressed: () {
-                                      controller.deleteBookmark(data['id']);
+                                      Get.offAllNamed(Routes.HOME);
                                     },
-                                    icon: Icon(Icons.delete),
-                                    color:
-                                        Get.isDarkMode ? appGreyLight : appGrey,
-                                    tooltip: "Hapus Bookmark",
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          Get.isDarkMode
+                                              ? appGreenLight
+                                              : appGreenDark,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      "Refresh",
+                                      style: GoogleFonts.nunito(
+                                        color: appWhite,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                          return ListView.builder(
+                            itemCount: snapshot.data!.references!.length,
+                            itemBuilder: (context, index) {
+                              juzReferences juz =
+                                  snapshot.data!.references![index];
+                              String surahName = controller.getSurahName(
+                                juz.surah ?? 0,
+                              );
+                              return Container(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color:
+                                          Get.isDarkMode
+                                              ? appGreyLight.withOpacity(0.1)
+                                              : appGrey.withOpacity(0.1),
+                                      width: 1,
+                                    ),
+                                  ),
+                                ),
+                                child: ListTile(
+                                  onTap: () {
+                                    Get.toNamed(
+                                      Routes.DETAIL_JUZ,
+                                      arguments: index,
+                                    );
+                                  },
+                                  leading: Container(
+                                    height: 40,
+                                    width: 40,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                          Get.isDarkMode
+                                              ? "assets/images/list_dark.png"
+                                              : "assets/images/list_light.png",
+                                        ),
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "${index + 1}",
+                                        style: GoogleFonts.nunito(),
+                                      ),
+                                    ),
+                                  ),
+                                  title: Text(
+                                    "Juz ${index + 1}",
+                                    style: GoogleFonts.nunito(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    "Start $surahName : ${juz.ayah}",
+                                    style: GoogleFonts.nunito(
+                                      color:
+                                          Get.isDarkMode
+                                              ? appGreyLight
+                                              : appGrey,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    GetBuilder<HomeController>(
+                      builder: (c) {
+                        return FutureBuilder(
+                          future: controller.getBookmark(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            }
+
+                            if (snapshot.data?.isEmpty ?? true) {
+                              return Center(
+                                child: Text(
+                                  "Tidak ada Bookmark!",
+                                  style: GoogleFonts.nunito(),
+                                ),
+                              );
+                            }
+
+                            return ListView.builder(
+                              itemCount: snapshot.data?.length ?? 0,
+                              itemBuilder: (context, index) {
+                                Map<String, dynamic> data =
+                                    snapshot.data![index];
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color:
+                                            Get.isDarkMode
+                                                ? appGreyLight.withOpacity(0.1)
+                                                : appGrey.withOpacity(0.1),
+                                        width: 1,
+                                      ),
+                                    ),
+                                  ),
+                                  child: ListTile(
+                                    onTap: () {
+                                      controller.navigateToBookmark(data);
+                                    },
+                                    leading: Container(
+                                      height: 40,
+                                      width: 40,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: AssetImage(
+                                            Get.isDarkMode
+                                                ? "assets/images/list_dark.png"
+                                                : "assets/images/list_light.png",
+                                          ),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "${index + 1}",
+                                          style: GoogleFonts.nunito(),
+                                        ),
+                                      ),
+                                    ),
+                                    title: Text(
+                                      "${data["surah"]}",
+                                      style: GoogleFonts.nunito(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      "Verse ${data["ayah"]} | Juz ${data["juz"]}",
+                                      style: GoogleFonts.nunito(
+                                        color:
+                                            Get.isDarkMode
+                                                ? appGreyLight
+                                                : appGrey,
+                                      ),
+                                    ),
+                                    trailing: IconButton(
+                                      onPressed: () {
+                                        Get.dialog(
+                                          AlertDialog(
+                                            title: Text(
+                                              "Delete Bookmark",
+                                              style: GoogleFonts.nunito(),
+                                            ),
+                                            content: Text(
+                                              "Are you sure you want to delete this bookmark?",
+                                              style: GoogleFonts.nunito(),
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () => Get.back(),
+                                                child: Text(
+                                                  "Cancel",
+                                                  style: GoogleFonts.nunito(),
+                                                ),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  controller.deleteBookmark(
+                                                    data['id'],
+                                                  );
+                                                  Get.back();
+                                                  Get.snackbar(
+                                                    "Success",
+                                                    "Bookmark have been deleted",
+                                                  );
+                                                },
+                                                child: Text(
+                                                  "Delete",
+                                                  style: TextStyle(
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                      icon: Icon(Icons.delete),
+                                      color:
+                                          Get.isDarkMode
+                                              ? appGreyLight
+                                              : appGrey,
+                                      tooltip: "delete Bookmark",
+                                    ),
                                   ),
                                 );
                               },

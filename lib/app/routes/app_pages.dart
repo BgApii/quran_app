@@ -6,8 +6,6 @@ import '../modules/detail_surah/bindings/detail_surah_binding.dart';
 import '../modules/detail_surah/views/detail_surah_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
-import '../modules/search/bindings/search_binding.dart';
-import '../modules/search/views/search_view.dart';
 import '../modules/settings/bindings/settings_binding.dart';
 import '../modules/settings/views/settings_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
@@ -40,11 +38,6 @@ class AppPages {
       name: _Paths.DETAIL_JUZ,
       page: () => DetailJuzView(),
       binding: DetailJuzBinding(),
-    ),
-    GetPage(
-      name: _Paths.SEARCH,
-      page: () => const SearchView(),
-      binding: SearchBinding(),
     ),
     GetPage(
       name: _Paths.SETTINGS,
