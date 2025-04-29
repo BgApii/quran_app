@@ -46,6 +46,11 @@ dependencies:
   google_fonts: ^6.2.1
   flutter_launcher_icons: ^0.14.3
   rename: ^3.0.2
+  firebase_core: ^3.13.0
+  firebase_auth: ^5.5.3
+  google_sign_in: ^6.3.0
+  font_awesome_flutter: ^10.8.0
+  provider: ^6.1.4
 
 dev_dependencies:
   flutter_test:

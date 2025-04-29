@@ -1,10 +1,13 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:quran/app/data/db/bookmark.dart';
 import 'package:quran/app/data/models/meta.dart';
 import 'package:quran/app/routes/app_pages.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 class HomeController extends GetxController {
@@ -15,6 +18,14 @@ class HomeController extends GetxController {
     Database db = await database.db;
     db.delete("bookmarks", where: "id = $id");
     update();
+  }
+
+  void logout() async {
+    await FirebaseAuth.instance.signOut();
+    await GoogleSignIn().signOut();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    Get.offAllNamed(Routes.SPLASH); // kembali ke login screen
   }
 
   // Di HomeController

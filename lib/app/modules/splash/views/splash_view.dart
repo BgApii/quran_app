@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -40,19 +41,11 @@ class SplashView extends GetView<SplashController> {
               height: 200,
             ),
             SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () => Get.offAllNamed(Routes.HOME),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-              ),
-              child: Text(
-                "GET STARTED",
-                style: TextStyle(
-                  color: Get.isDarkMode ? appWhiteLight : appWhite,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-              ),
+            IconButton(
+              icon: FaIcon(FontAwesomeIcons.google),
+              onPressed: () => controller.signInWithGoogle(),
+              color: Colors.white,
+              iconSize: 30,
             ),
           ],
         ),
