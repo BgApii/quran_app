@@ -501,7 +501,21 @@ class HomeView extends GetView<HomeController> {
                               return StreamBuilder<QuerySnapshot<Object?>>(
                                 stream: controller.getDataStream(),
                                 builder: (context, snapshot) {
-                                  if (snapshot.data?.size == 0) {
+                                  var listAllBookmark = snapshot.data?.docs;
+                                  bool hasBookmarks = false;
+                                  if (listAllBookmark != null) {
+                                    for (var doc in listAllBookmark) {
+                                      Map<String, dynamic> data =
+                                          doc.data() as Map<String, dynamic>;
+                                      if (data['last_read'] == 0) {
+                                        hasBookmarks = true;
+                                        break;
+                                      }
+                                    }
+                                  }
+                                  if (listAllBookmark == null ||
+                                      listAllBookmark.isEmpty ||
+                                      !hasBookmarks) {
                                     return Center(
                                       child: Text(
                                         "Tidak ada Bookmark!",
@@ -527,119 +541,123 @@ class HomeView extends GetView<HomeController> {
                                                 as Map<String, dynamic>;
                                         // Map<String, dynamic> data =
                                         //     snapshot.data![index];
-                                        return Container(
-                                          decoration: BoxDecoration(
-                                            border: Border(
-                                              bottom: BorderSide(
-                                                color:
-                                                    Get.isDarkMode
-                                                        ? appGreyLight
-                                                            .withOpacity(0.1)
-                                                        : appGrey.withOpacity(
-                                                          0.1,
-                                                        ),
-                                                width: 1,
+                                        if (data['last_read'] == 0) {
+                                          return Container(
+                                            decoration: BoxDecoration(
+                                              border: Border(
+                                                bottom: BorderSide(
+                                                  color:
+                                                      Get.isDarkMode
+                                                          ? appGreyLight
+                                                              .withOpacity(0.1)
+                                                          : appGrey.withOpacity(
+                                                            0.1,
+                                                          ),
+                                                  width: 1,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          child: ListTile(
-                                            onTap: () {
-                                              controller.navigateToBookmark(
-                                                data,
-                                              );
-                                            },
-                                            leading: Container(
-                                              height: 40,
-                                              width: 40,
-                                              decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                                  image: AssetImage(
-                                                    Get.isDarkMode
-                                                        ? "assets/images/list_dark.png"
-                                                        : "assets/images/list_light.png",
+                                            child: ListTile(
+                                              onTap: () {
+                                                controller.navigateToBookmark(
+                                                  data,
+                                                );
+                                              },
+                                              leading: Container(
+                                                height: 40,
+                                                width: 40,
+                                                decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                    image: AssetImage(
+                                                      Get.isDarkMode
+                                                          ? "assets/images/list_dark.png"
+                                                          : "assets/images/list_light.png",
+                                                    ),
+                                                  ),
+                                                ),
+                                                child: Center(
+                                                  child: Text(
+                                                    "${index + 1}",
+                                                    style: GoogleFonts.nunito(),
                                                   ),
                                                 ),
                                               ),
-                                              child: Center(
-                                                child: Text(
-                                                  "${index + 1}",
-                                                  style: GoogleFonts.nunito(),
+                                              title: Text(
+                                                "${data['surah']}",
+                                                style: GoogleFonts.nunito(
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                            ),
-                                            title: Text(
-                                              "${data['surah']}",
-                                              style: GoogleFonts.nunito(
-                                                fontWeight: FontWeight.bold,
+                                              subtitle: Text(
+                                                "Verse ${data['ayah']} | Juz ${data['juz']}",
+                                                style: GoogleFonts.nunito(
+                                                  color:
+                                                      Get.isDarkMode
+                                                          ? appGreyLight
+                                                          : appGrey,
+                                                ),
                                               ),
-                                            ),
-                                            subtitle: Text(
-                                              "Verse ${data['ayah']} | Juz ${data['juz']}",
-                                              style: GoogleFonts.nunito(
+                                              trailing: IconButton(
+                                                onPressed: () {
+                                                  Get.dialog(
+                                                    AlertDialog(
+                                                      title: Text(
+                                                        "Delete Bookmark",
+                                                        style:
+                                                            GoogleFonts.nunito(),
+                                                      ),
+                                                      content: Text(
+                                                        "Are you sure you want to delete this bookmark?",
+                                                        style:
+                                                            GoogleFonts.nunito(),
+                                                      ),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed:
+                                                              () => Get.back(),
+                                                          child: Text(
+                                                            "Cancel",
+                                                            style: GoogleFonts.nunito(
+                                                              color:
+                                                                  appGreenLight2,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            controller
+                                                                .deleteBookmark(
+                                                                  listAllBookmark[index]
+                                                                      .id,
+                                                                );
+                                                            Get.back();
+                                                            Get.snackbar(
+                                                              "Success",
+                                                              "Bookmark have been deleted",
+                                                            );
+                                                          },
+                                                          child: Text(
+                                                            "Delete",
+                                                            style: TextStyle(
+                                                              color: Colors.red,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                                icon: Icon(Icons.delete),
                                                 color:
                                                     Get.isDarkMode
                                                         ? appGreyLight
                                                         : appGrey,
+                                                tooltip: "delete Bookmark",
                                               ),
                                             ),
-                                            trailing: IconButton(
-                                              onPressed: () {
-                                                Get.dialog(
-                                                  AlertDialog(
-                                                    title: Text(
-                                                      "Delete Bookmark",
-                                                      style:
-                                                          GoogleFonts.nunito(),
-                                                    ),
-                                                    content: Text(
-                                                      "Are you sure you want to delete this bookmark?",
-                                                      style:
-                                                          GoogleFonts.nunito(),
-                                                    ),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed:
-                                                            () => Get.back(),
-                                                        child: Text(
-                                                          "Cancel",
-                                                          style: GoogleFonts.nunito(
-                                                            color:
-                                                                appGreenLight2,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      TextButton(
-                                                        onPressed: () {
-                                                          controller.deleteBookmark(
-                                                            listAllBookmark[index]
-                                                                .id,
-                                                          );
-                                                          Get.back();
-                                                          Get.snackbar(
-                                                            "Success",
-                                                            "Bookmark have been deleted",
-                                                          );
-                                                        },
-                                                        child: Text(
-                                                          "Delete",
-                                                          style: TextStyle(
-                                                            color: Colors.red,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                              icon: Icon(Icons.delete),
-                                              color:
-                                                  Get.isDarkMode
-                                                      ? appGreyLight
-                                                      : appGrey,
-                                              tooltip: "delete Bookmark",
-                                            ),
-                                          ),
-                                        );
+                                          );
+                                        }
+                                        return SizedBox();
                                       },
                                     );
                                   }

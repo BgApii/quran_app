@@ -69,7 +69,40 @@ class NavBar extends GetView<HomeController> {
                     leading: Icon(Icons.logout),
                     title: Text("Logout", style: GoogleFonts.nunito()),
                     onTap: () {
-                      controller.logout();
+                      Get.dialog(
+                        AlertDialog(
+                          title: Text("Logout", style: GoogleFonts.nunito()),
+                          content: Text(
+                            "Are you sure you want to logout?",
+                            style: GoogleFonts.nunito(),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Get.back(),
+                              child: Text(
+                                "Cancel",
+                                style: GoogleFonts.nunito(
+                                  color: appGreenLight2,
+                                ),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                controller.logout();
+                                Get.back();
+                                Get.snackbar(
+                                  "Success",
+                                  "Logged out successfully",
+                                );
+                              },
+                              child: Text(
+                                "Logout",
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
                     },
                   ),
                 ],

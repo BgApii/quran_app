@@ -29,7 +29,10 @@ class HomeController extends GetxController {
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection('bookmarks');
-    return bookmarks.where('last_read', isEqualTo: 0).snapshots();
+    return bookmarks
+        // .where('last_read', isEqualTo: 0)
+        .orderBy('created_at', descending: true)
+        .snapshots();
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> getLastReadStream() {

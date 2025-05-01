@@ -71,6 +71,7 @@ class DetailJuzController extends GetxController {
       if (existing.docs.isEmpty) {
         await bookmarks.add({
           "uid": FirebaseAuth.instance.currentUser!.uid,
+          "created_at": FieldValue.serverTimestamp(),
           "surah": surah.englishName,
           "ayah": ayah.numberInSurah,
           "juz": ayah.juz,
