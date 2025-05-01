@@ -184,7 +184,7 @@ class DetailJuzView extends GetView<DetailJuzController> {
                                 color: appWhite,
                               ),
                               Text(
-                                "${arabAyah.surah?.numberOfAyahs} Ayat | ${arabAyah.surah?.revelationType}",
+                                "${arabAyah.surah?.numberOfAyahs} Verse | ${arabAyah.surah?.revelationType}",
                                 style: GoogleFonts.nunito(
                                   fontSize: 12,
                                   color: Colors.white,
@@ -295,7 +295,7 @@ class DetailJuzView extends GetView<DetailJuzController> {
                                     actions: [
                                       ElevatedButton(
                                         onPressed: () async {
-                                          await controller.addBookmark(
+                                          controller.add(
                                             true,
                                             arabAyah.surah!,
                                             arabAyah,
@@ -312,7 +312,7 @@ class DetailJuzView extends GetView<DetailJuzController> {
                                       ),
                                       ElevatedButton(
                                         onPressed: () {
-                                          controller.addBookmark(
+                                          controller.add(
                                             false,
                                             arabAyah.surah!,
                                             arabAyah,

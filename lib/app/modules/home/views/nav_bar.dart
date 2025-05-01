@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quran/app/constant/color.dart';
 import 'package:quran/app/modules/home/controllers/home_controller.dart';
+import 'package:quran/app/modules/splash/controllers/splash_controller.dart';
 import 'package:quran/app/routes/app_pages.dart';
 
 class NavBar extends GetView<HomeController> {

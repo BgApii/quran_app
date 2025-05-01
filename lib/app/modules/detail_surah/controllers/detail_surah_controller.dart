@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
@@ -10,6 +12,8 @@ import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DetailSurahController extends GetxController {
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+
   AutoScrollController scrollC = AutoScrollController();
   RxString audioCondition = "stop".obs; // Status audio: play, pause, stop
   RxInt currentPlayingAyah =
@@ -57,42 +61,36 @@ class DetailSurahController extends GetxController {
     }
   }
 
-  Future<void> addBookmark(
-    bool lastRead,
-    DetailSurah surah,
-    Ayahs ayah,
-    int index,
-  ) async {
+  void add(bool lastRead, DetailSurah surah, Ayahs ayah, int index) async {
+    CollectionReference bookmarks = firestore
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('bookmarks');
+    final existing =
+        await bookmarks
+            .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+            .where('surah', isEqualTo: surah.englishName)
+            .where('ayah', isEqualTo: ayah.numberInSurah)
+            .where('juz', isEqualTo: ayah.juz)
+            .where('index_ayah', isEqualTo: index)
+            .where('last_read', isEqualTo: 0)
+            .get();
+
     try {
-      Database db = await database.db;
-      bool isExist = false;
-
-      if (lastRead == true) {
-        await db.delete("bookmarks", where: "last_read = ?", whereArgs: [1]);
-      } else {
-        List checkdata = await db.query(
-          "bookmarks",
-          where:
-              "surah = ? AND ayah = ? AND juz = ? AND index_ayah = ? AND last_read = ?",
-          whereArgs: [
-            surah.englishName,
-            ayah.numberInSurah.toString(),
-            ayah.juz.toString(),
-            index.toString(),
-            0,
-          ],
-        );
-        if (checkdata.isNotEmpty) {
-          isExist = true;
-        }
+      if (lastRead) {
+        await bookmarks.where('last_read', isEqualTo: 1).get().then((value) {
+          for (var doc in value.docs) {
+            doc.reference.delete();
+          }
+        });
       }
-
-      if (!isExist) {
-        await db.insert("bookmarks", {
+      if (existing.docs.isEmpty) {
+        await bookmarks.add({
+          "uid": FirebaseAuth.instance.currentUser!.uid,
           "surah": surah.englishName,
-          "ayah": ayah.numberInSurah.toString(),
-          "juz": ayah.juz.toString(),
-          "index_ayah": index.toString(),
+          "ayah": ayah.numberInSurah,
+          "juz": ayah.juz,
+          "index_ayah": index,
           "last_read": lastRead ? 1 : 0,
         });
         Get.back();
@@ -105,14 +103,68 @@ class DetailSurahController extends GetxController {
         Get.back();
         Get.snackbar("Gagal", "Bookmark sudah ada");
       }
-
-      var data = await db.query("bookmarks");
-      print(data);
     } catch (e) {
       Get.snackbar("Gagal", "Gagal menyimpan bookmark: $e");
       print("Error inserting bookmark: $e");
     }
   }
+
+  // Future<void> addBookmark(
+  //   bool lastRead,
+  //   DetailSurah surah,
+  //   Ayahs ayah,
+  //   int index,
+  // ) async {
+  //   try {
+  //     Database db = await database.db;
+  //     bool isExist = false;
+
+  //     if (lastRead == true) {
+  //       await db.delete("bookmarks", where: "last_read = ?", whereArgs: [1]);
+  //     } else {
+  //       List checkdata = await db.query(
+  //         "bookmarks",
+  //         where:
+  //             "surah = ? AND ayah = ? AND juz = ? AND index_ayah = ? AND last_read = ?",
+  //         whereArgs: [
+  //           surah.englishName,
+  //           ayah.numberInSurah.toString(),
+  //           ayah.juz.toString(),
+  //           index.toString(),
+  //           0,
+  //         ],
+  //       );
+  //       if (checkdata.isNotEmpty) {
+  //         isExist = true;
+  //       }
+  //     }
+
+  //     if (!isExist) {
+  //       await db.insert("bookmarks", {
+  //         "surah": surah.englishName,
+  //         "ayah": ayah.numberInSurah.toString(),
+  //         "juz": ayah.juz.toString(),
+  //         "index_ayah": index.toString(),
+  //         "last_read": lastRead ? 1 : 0,
+  //       });
+  //       Get.back();
+  //       if (lastRead) {
+  //         Get.snackbar("Berhasil", "Berhasil menyimpan Terakhir dibaca");
+  //       } else {
+  //         Get.snackbar("Berhasil", "Berhasil menyimpan bookmark");
+  //       }
+  //     } else {
+  //       Get.back();
+  //       Get.snackbar("Gagal", "Bookmark sudah ada");
+  //     }
+
+  //     var data = await db.query("bookmarks");
+  //     print(data);
+  //   } catch (e) {
+  //     Get.snackbar("Gagal", "Gagal menyimpan bookmark: $e");
+  //     print("Error inserting bookmark: $e");
+  //   }
+  // }
 
   Future<Map<String, DetailSurah>> getAyahSurah(String id) async {
     final settingsController = Get.find<SettingsController>();

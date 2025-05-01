@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:quran/app/modules/settings/controllers/settings_controller.dart';
+import 'package:quran/app/modules/splash/controllers/splash_controller.dart';
 import 'package:quran/app/routes/app_pages.dart';
 import 'package:quran/app/constant/color.dart';
 import 'package:firebase_core/firebase_core.dart';

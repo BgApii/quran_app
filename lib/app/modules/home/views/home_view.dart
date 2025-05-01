@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -104,209 +105,105 @@ class HomeView extends GetView<HomeController> {
                     SizedBox(height: 10),
                     GetBuilder<HomeController>(
                       builder:
-                          (controller) => FutureBuilder<Map<String, dynamic>?>(
-                            future: controller.getLastRead(),
-                            builder: (context, snapshot) {
+                          (controller) => StreamBuilder<
+                            QuerySnapshot<Map<String, dynamic>>
+                          >(
+                            stream: controller.getLastReadStream(),
+                            builder: (
+                              context,
+                              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                              snapshot,
+                            ) {
+                              // Handle loading state
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [appGreenLight, appGreen],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      Positioned(
-                                        bottom: 0,
-                                        right: 10,
-                                        child: Opacity(
-                                          opacity: 0.3,
-                                          child: Image.asset(
-                                            "assets/images/quran.png",
-                                            width: 150,
-                                            height: 150,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.all(24.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.menu_book,
-                                                  color: appWhite,
-                                                  size: 20,
-                                                ),
-                                                SizedBox(width: 10),
-                                                Text(
-                                                  "Last Read",
-                                                  style: GoogleFonts.nunito(
-                                                    fontSize: 12,
-                                                    color: appWhite,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(height: 20),
-                                            Text(
-                                              "Loading...",
-                                              style: GoogleFonts.nunito(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                color: appWhite,
-                                              ),
-                                            ),
-                                            // SizedBox(height: 3),
-                                            Text(""),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                return _buildLastReadContainer(
+                                  context,
+                                  title: "Loading...",
+                                  subtitle: "",
+                                  isLoading: true,
                                 );
                               }
-                              Map<String, dynamic>? lastRead = snapshot.data;
 
-                              return Container(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [appGreenLight, appGreen],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Material(
-                                  color: Colors.transparent,
-                                  borderRadius: BorderRadius.circular(15),
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.circular(15),
-                                    onLongPress: () {
-                                      if (lastRead != null) {
-                                        Get.dialog(
-                                          AlertDialog(
-                                            title: Text(
-                                              "Delete Last Read",
-                                              style: GoogleFonts.nunito(),
-                                            ),
-                                            content: Text(
-                                              "Are you sure you want to delete this last read?",
-                                              style: GoogleFonts.nunito(),
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () => Get.back(),
-                                                child: Text(
-                                                  "Cancel",
-                                                  style: GoogleFonts.nunito(
-                                                    color: appGreenLight2,
-                                                  ),
-                                                ),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  controller.deleteBookmark(
-                                                    lastRead['id'],
-                                                  );
-                                                  Get.back();
-                                                  Get.snackbar(
-                                                    "Success",
-                                                    "Last read have been deleted",
-                                                  );
-                                                },
-                                                child: Text(
-                                                  "Delete",
-                                                  style: TextStyle(
-                                                    color: Colors.red,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      }
-                                    },
-                                    onTap: () {
-                                      if (lastRead != null) {
-                                        controller.navigateToBookmark(lastRead);
-                                      }
-                                    },
-                                    child: Stack(
-                                      children: [
-                                        Positioned(
-                                          bottom: 0,
-                                          right: 10,
-                                          child: Opacity(
-                                            opacity: 0.3,
-                                            child: Image.asset(
-                                              "assets/images/quran.png",
-                                              width: 150,
-                                              height: 150,
-                                              fit: BoxFit.cover,
+                              // Handle error state
+                              if (snapshot.hasError) {
+                                return _buildLastReadContainer(
+                                  context,
+                                  title: "Error",
+                                  subtitle: snapshot.error.toString(),
+                                );
+                              }
+
+                              // Handle no data or empty docs
+                              if (!snapshot.hasData ||
+                                  snapshot.data!.docs.isEmpty) {
+                                return _buildLastReadContainer(
+                                  context,
+                                  title: "Add Last Read",
+                                  subtitle: "No Last Read",
+                                  onTap: () {
+                                    // Optionally navigate to a screen to add a last read
+                                    // Example: Get.toNamed(Routes.ADD_BOOKMARK);
+                                  },
+                                );
+                              }
+
+                              // Data exists, extract the first document
+                              var lastRead = snapshot.data!.docs.first.data();
+                              var docId =
+                                  snapshot
+                                      .data!
+                                      .docs
+                                      .first
+                                      .id; // Get document ID for deletion
+
+                              return _buildLastReadContainer(
+                                context,
+                                title: lastRead['surah'] ?? "Unknown Surah",
+                                subtitle:
+                                    "Verse ${lastRead['ayah'] ?? 'N/A'} | Juz ${lastRead['juz'] ?? 'N/A'}",
+                                onTap: () {
+                                  controller.navigateToBookmark(lastRead);
+                                },
+                                onLongPress: () {
+                                  Get.dialog(
+                                    AlertDialog(
+                                      title: Text(
+                                        "Delete Last Read",
+                                        style: GoogleFonts.nunito(),
+                                      ),
+                                      content: Text(
+                                        "Are you sure you want to delete this last read?",
+                                        style: GoogleFonts.nunito(),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Get.back(),
+                                          child: Text(
+                                            "Cancel",
+                                            style: GoogleFonts.nunito(
+                                              color: appGreenLight2,
                                             ),
                                           ),
                                         ),
-                                        Padding(
-                                          padding: EdgeInsets.all(24.0),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.menu_book,
-                                                    color: appWhite,
-                                                    size: 20,
-                                                  ),
-                                                  SizedBox(width: 10),
-                                                  Text(
-                                                    "Last Read",
-                                                    style: GoogleFonts.nunito(
-                                                      fontSize: 12,
-                                                      color: appWhite,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(height: 20),
-
-                                              Text(
-                                                lastRead == null
-                                                    ? "Add Last Read"
-                                                    : "${lastRead["surah"]}",
-                                                style: GoogleFonts.nunito(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: appWhite,
-                                                ),
-                                              ),
-                                              // SizedBox(height: 3),
-                                              Text(
-                                                lastRead == null
-                                                    ? "No Last Read"
-                                                    : "Verse ${lastRead["ayah"]} | Juz ${lastRead["juz"]}",
-                                                style: GoogleFonts.nunito(
-                                                  fontSize: 12,
-                                                  color: appWhite,
-                                                ),
-                                              ),
-                                            ],
+                                        TextButton(
+                                          onPressed: () {
+                                            controller.deleteBookmark(docId);
+                                            Get.back();
+                                            Get.snackbar(
+                                              "Success",
+                                              "Last read has been deleted",
+                                            );
+                                          },
+                                          child: Text(
+                                            "Delete",
+                                            style: TextStyle(color: Colors.red),
                                           ),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ),
+                                  );
+                                },
                               );
                             },
                           ),
@@ -601,17 +498,10 @@ class HomeView extends GetView<HomeController> {
                           ),
                           GetBuilder<HomeController>(
                             builder: (c) {
-                              return FutureBuilder(
-                                future: controller.getBookmark(),
+                              return StreamBuilder<QuerySnapshot<Object?>>(
+                                stream: controller.getDataStream(),
                                 builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return Center(
-                                      child: CircularProgressIndicator(),
-                                    );
-                                  }
-
-                                  if (snapshot.data?.isEmpty ?? true) {
+                                  if (snapshot.data?.size == 0) {
                                     return Center(
                                       child: Text(
                                         "Tidak ada Bookmark!",
@@ -619,123 +509,142 @@ class HomeView extends GetView<HomeController> {
                                       ),
                                     );
                                   }
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
 
-                                  return ListView.builder(
-                                    itemCount: snapshot.data?.length ?? 0,
-                                    itemBuilder: (context, index) {
-                                      Map<String, dynamic> data =
-                                          snapshot.data![index];
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                          border: Border(
-                                            bottom: BorderSide(
-                                              color:
-                                                  Get.isDarkMode
-                                                      ? appGreyLight
-                                                          .withOpacity(0.1)
-                                                      : appGrey.withOpacity(
-                                                        0.1,
-                                                      ),
-                                              width: 1,
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.active) {
+                                    var listAllBookmark = snapshot.data?.docs;
+                                    return ListView.builder(
+                                      itemCount: listAllBookmark?.length ?? 0,
+                                      itemBuilder: (context, index) {
+                                        Map<String, dynamic> data =
+                                            listAllBookmark![index].data()
+                                                as Map<String, dynamic>;
+                                        // Map<String, dynamic> data =
+                                        //     snapshot.data![index];
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              bottom: BorderSide(
+                                                color:
+                                                    Get.isDarkMode
+                                                        ? appGreyLight
+                                                            .withOpacity(0.1)
+                                                        : appGrey.withOpacity(
+                                                          0.1,
+                                                        ),
+                                                width: 1,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        child: ListTile(
-                                          onTap: () {
-                                            controller.navigateToBookmark(data);
-                                          },
-                                          leading: Container(
-                                            height: 40,
-                                            width: 40,
-                                            decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                image: AssetImage(
-                                                  Get.isDarkMode
-                                                      ? "assets/images/list_dark.png"
-                                                      : "assets/images/list_light.png",
+                                          child: ListTile(
+                                            onTap: () {
+                                              controller.navigateToBookmark(
+                                                data,
+                                              );
+                                            },
+                                            leading: Container(
+                                              height: 40,
+                                              width: 40,
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                  image: AssetImage(
+                                                    Get.isDarkMode
+                                                        ? "assets/images/list_dark.png"
+                                                        : "assets/images/list_light.png",
+                                                  ),
+                                                ),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  "${index + 1}",
+                                                  style: GoogleFonts.nunito(),
                                                 ),
                                               ),
                                             ),
-                                            child: Center(
-                                              child: Text(
-                                                "${index + 1}",
-                                                style: GoogleFonts.nunito(),
+                                            title: Text(
+                                              "${data['surah']}",
+                                              style: GoogleFonts.nunito(
+                                                fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                          ),
-                                          title: Text(
-                                            "${data["surah"]}",
-                                            style: GoogleFonts.nunito(
-                                              fontWeight: FontWeight.bold,
+                                            subtitle: Text(
+                                              "Verse ${data['ayah']} | Juz ${data['juz']}",
+                                              style: GoogleFonts.nunito(
+                                                color:
+                                                    Get.isDarkMode
+                                                        ? appGreyLight
+                                                        : appGrey,
+                                              ),
                                             ),
-                                          ),
-                                          subtitle: Text(
-                                            "Verse ${data["ayah"]} | Juz ${data["juz"]}",
-                                            style: GoogleFonts.nunito(
+                                            trailing: IconButton(
+                                              onPressed: () {
+                                                Get.dialog(
+                                                  AlertDialog(
+                                                    title: Text(
+                                                      "Delete Bookmark",
+                                                      style:
+                                                          GoogleFonts.nunito(),
+                                                    ),
+                                                    content: Text(
+                                                      "Are you sure you want to delete this bookmark?",
+                                                      style:
+                                                          GoogleFonts.nunito(),
+                                                    ),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed:
+                                                            () => Get.back(),
+                                                        child: Text(
+                                                          "Cancel",
+                                                          style: GoogleFonts.nunito(
+                                                            color:
+                                                                appGreenLight2,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          controller.deleteBookmark(
+                                                            listAllBookmark[index]
+                                                                .id,
+                                                          );
+                                                          Get.back();
+                                                          Get.snackbar(
+                                                            "Success",
+                                                            "Bookmark have been deleted",
+                                                          );
+                                                        },
+                                                        child: Text(
+                                                          "Delete",
+                                                          style: TextStyle(
+                                                            color: Colors.red,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                              icon: Icon(Icons.delete),
                                               color:
                                                   Get.isDarkMode
                                                       ? appGreyLight
                                                       : appGrey,
+                                              tooltip: "delete Bookmark",
                                             ),
                                           ),
-                                          trailing: IconButton(
-                                            onPressed: () {
-                                              Get.dialog(
-                                                AlertDialog(
-                                                  title: Text(
-                                                    "Delete Bookmark",
-                                                    style: GoogleFonts.nunito(),
-                                                  ),
-                                                  content: Text(
-                                                    "Are you sure you want to delete this bookmark?",
-                                                    style: GoogleFonts.nunito(),
-                                                  ),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed:
-                                                          () => Get.back(),
-                                                      child: Text(
-                                                        "Cancel",
-                                                        style:
-                                                            GoogleFonts.nunito(
-                                                              color:
-                                                                  appGreenLight2,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                    TextButton(
-                                                      onPressed: () {
-                                                        controller
-                                                            .deleteBookmark(
-                                                              data['id'],
-                                                            );
-                                                        Get.back();
-                                                        Get.snackbar(
-                                                          "Success",
-                                                          "Bookmark have been deleted",
-                                                        );
-                                                      },
-                                                      child: Text(
-                                                        "Delete",
-                                                        style: TextStyle(
-                                                          color: Colors.red,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                            icon: Icon(Icons.delete),
-                                            color:
-                                                Get.isDarkMode
-                                                    ? appGreyLight
-                                                    : appGrey,
-                                            tooltip: "delete Bookmark",
-                                          ),
-                                        ),
-                                      );
-                                    },
+                                        );
+                                      },
+                                    );
+                                  }
+                                  return Center(
+                                    child: CircularProgressIndicator(),
                                   );
                                 },
                               );
@@ -759,4 +668,91 @@ class HomeView extends GetView<HomeController> {
       ),
     );
   }
+}
+
+// Helper method to build the Last Read container
+Widget _buildLastReadContainer(
+  BuildContext context, {
+  required String title,
+  required String subtitle,
+  bool isLoading = false,
+  VoidCallback? onTap,
+  VoidCallback? onLongPress,
+}) {
+  return Container(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        colors: [appGreenLight, appGreen],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      borderRadius: BorderRadius.circular(15),
+    ),
+    child: Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(15),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(15),
+        onTap: onTap,
+        onLongPress: onLongPress,
+        child: Stack(
+          children: [
+            Positioned(
+              bottom: 0,
+              right: 10,
+              child: Opacity(
+                opacity: 0.3,
+                child: Image.asset(
+                  "assets/images/quran.png",
+                  width: 150,
+                  height: 150,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min, // Prevent Column from expanding
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.menu_book, color: appWhite, size: 20),
+                      SizedBox(width: 10),
+                      Text(
+                        "Last Read",
+                        style: GoogleFonts.nunito(
+                          fontSize: 12,
+                          color: appWhite,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    title,
+                    style: GoogleFonts.nunito(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: appWhite,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 3),
+                  Text(
+                    subtitle,
+                    style: GoogleFonts.nunito(fontSize: 12, color: appWhite),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 }

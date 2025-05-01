@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
@@ -8,6 +10,8 @@ import 'package:quran/app/data/models/detail_juz.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DetailJuzController extends GetxController {
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+
   RxString audioCondition = "stop".obs; // Status audio: play, pause, stop
   RxInt currentPlayingAyah =
       (-1).obs; // Ayat yang sedang diputar (-1 berarti tidak ada)
@@ -39,6 +43,54 @@ class DetailJuzController extends GetxController {
         }
       }
     });
+  }
+
+  void add(bool lastRead, Surah surah, Ayahs ayah, int index) async {
+    CollectionReference bookmarks = firestore
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('bookmarks');
+    final existing =
+        await bookmarks
+            .where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+            .where('surah', isEqualTo: surah.englishName)
+            .where('ayah', isEqualTo: ayah.numberInSurah)
+            .where('juz', isEqualTo: ayah.juz)
+            .where('index_ayah', isEqualTo: index)
+            .where('last_read', isEqualTo: 0)
+            .get();
+
+    try {
+      if (lastRead) {
+        await bookmarks.where('last_read', isEqualTo: 1).get().then((value) {
+          for (var doc in value.docs) {
+            doc.reference.delete();
+          }
+        });
+      }
+      if (existing.docs.isEmpty) {
+        await bookmarks.add({
+          "uid": FirebaseAuth.instance.currentUser!.uid,
+          "surah": surah.englishName,
+          "ayah": ayah.numberInSurah,
+          "juz": ayah.juz,
+          "index_ayah": index,
+          "last_read": lastRead ? 1 : 0,
+        });
+        Get.back();
+        if (lastRead) {
+          Get.snackbar("Berhasil", "Berhasil menyimpan Terakhir dibaca");
+        } else {
+          Get.snackbar("Berhasil", "Berhasil menyimpan bookmark");
+        }
+      } else {
+        Get.back();
+        Get.snackbar("Gagal", "Bookmark sudah ada");
+      }
+    } catch (e) {
+      Get.snackbar("Gagal", "Gagal menyimpan bookmark: $e");
+      print("Error inserting bookmark: $e");
+    }
   }
 
   Future<void> addBookmark(

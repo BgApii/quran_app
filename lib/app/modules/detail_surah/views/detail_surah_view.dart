@@ -142,7 +142,7 @@ class DetailSurahView extends GetView<DetailSurahController> {
                                 color: appWhite,
                               ),
                               Text(
-                                "${surah.numberOfAyahs} Ayat | ${surah.revelationType}",
+                                "${surah.numberOfAyahs} Verse | ${surah.revelationType}",
                                 style: GoogleFonts.nunito(
                                   fontSize: 12,
                                   color: appWhite,
@@ -310,7 +310,7 @@ class DetailSurahView extends GetView<DetailSurahController> {
                                             actions: [
                                               ElevatedButton(
                                                 onPressed: () async {
-                                                  await controller.addBookmark(
+                                                  controller.add(
                                                     true,
                                                     arab,
                                                     arabAyah,
@@ -327,7 +327,7 @@ class DetailSurahView extends GetView<DetailSurahController> {
                                               ),
                                               ElevatedButton(
                                                 onPressed: () {
-                                                  controller.addBookmark(
+                                                  controller.add(
                                                     false,
                                                     arab,
                                                     arabAyah,
