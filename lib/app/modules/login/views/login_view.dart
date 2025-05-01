@@ -6,10 +6,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:quran/app/constant/color.dart';
 
-import '../controllers/splash_controller.dart';
+import '../controllers/login_controller.dart';
 
-class SplashView extends GetView<SplashController> {
-  const SplashView({super.key});
+class LoginView extends GetView<LoginController> {
+  const LoginView({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +27,7 @@ class SplashView extends GetView<SplashController> {
             ),
             SizedBox(height: 20),
             Text(
-              "Sesibuk itukah kamu sampai belum\nmembaca alquran?",
+              "Are you so busy that you haven't\nread the Quran?",
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontSize: 16,
                 color: Get.isDarkMode ? appGreyLight : appGrey,

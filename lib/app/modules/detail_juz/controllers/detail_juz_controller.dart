@@ -4,10 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
-import 'package:quran/app/data/db/bookmark.dart';
 import 'package:quran/app/modules/settings/controllers/settings_controller.dart';
 import 'package:quran/app/data/models/detail_juz.dart';
-import 'package:sqflite/sqflite.dart';
 
 class DetailJuzController extends GetxController {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -18,7 +16,6 @@ class DetailJuzController extends GetxController {
   RxList<Ayahs> ayahs = <Ayahs>[].obs; // Daftar ayat dalam Juz
 
   final player = AudioPlayer();
-  DatabaseManager database = DatabaseManager.instance;
 
   @override
   void onInit() {
@@ -57,7 +54,7 @@ class DetailJuzController extends GetxController {
             .where('ayah', isEqualTo: ayah.numberInSurah)
             .where('juz', isEqualTo: ayah.juz)
             .where('index_ayah', isEqualTo: index)
-            .where('last_read', isEqualTo: 0)
+            .where('last_read', isEqualTo: lastRead ? 1 : 0)
             .get();
 
     try {
@@ -88,63 +85,6 @@ class DetailJuzController extends GetxController {
         Get.back();
         Get.snackbar("Gagal", "Bookmark sudah ada");
       }
-    } catch (e) {
-      Get.snackbar("Gagal", "Gagal menyimpan bookmark: $e");
-      print("Error inserting bookmark: $e");
-    }
-  }
-
-  Future<void> addBookmark(
-    bool lastRead,
-    Surah surah,
-    Ayahs ayah,
-    int index,
-  ) async {
-    try {
-      Database db = await database.db;
-      bool isExist = false;
-
-      if (lastRead == true) {
-        await db.delete("bookmarks", where: "last_read = ?", whereArgs: [1]);
-      } else {
-        List checkdata = await db.query(
-          "bookmarks",
-          where:
-              "surah = ? AND ayah = ? AND juz = ? AND index_ayah = ? AND last_read = ?",
-          whereArgs: [
-            surah.englishName,
-            ayah.numberInSurah.toString(),
-            ayah.juz.toString(),
-            index.toString(),
-            0,
-          ],
-        );
-        if (checkdata.isNotEmpty) {
-          isExist = true;
-        }
-      }
-
-      if (!isExist) {
-        await db.insert("bookmarks", {
-          "surah": surah.englishName,
-          "ayah": ayah.numberInSurah.toString(),
-          "juz": ayah.juz.toString(),
-          "index_ayah": index.toString(),
-          "last_read": lastRead ? 1 : 0,
-        });
-        Get.back();
-        if (lastRead) {
-          Get.snackbar("Berhasil", "Berhasil menyimpan Terakhir dibaca");
-        } else {
-          Get.snackbar("Berhasil", "Berhasil menyimpan bookmark");
-        }
-      } else {
-        Get.back();
-        Get.snackbar("Gagal", "Bookmark sudah ada");
-      }
-
-      var data = await db.query("bookmarks");
-      print(data);
     } catch (e) {
       Get.snackbar("Gagal", "Gagal menyimpan bookmark: $e");
       print("Error inserting bookmark: $e");

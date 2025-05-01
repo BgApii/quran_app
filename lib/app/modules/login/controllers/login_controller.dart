@@ -5,7 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:quran/app/routes/app_pages.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SplashController extends GetxController {
+class LoginController extends GetxController {
   @override
   void onReady() {
     super.onReady();

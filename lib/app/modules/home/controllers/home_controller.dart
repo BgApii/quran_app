@@ -5,15 +5,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
-import 'package:quran/app/data/db/bookmark.dart';
 import 'package:quran/app/data/models/meta.dart';
 import 'package:quran/app/routes/app_pages.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sqflite/sqflite.dart';
 
 class HomeController extends GetxController {
   Surahs? allSurahs; // Menyimpan semua data Surah
-  DatabaseManager database = DatabaseManager.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<QuerySnapshot<Object?>> getData() async {
@@ -66,18 +63,12 @@ class HomeController extends GetxController {
     await bookmarks.delete();
   }
 
-  // void deleteBookmark(int id) async {
-  //   Database db = await database.db;
-  //   db.delete("bookmarks", where: "id = $id");
-  //   update();
-  // }
-
   void logout() async {
     await FirebaseAuth.instance.signOut();
     await GoogleSignIn().signOut();
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
-    Get.offAllNamed(Routes.SPLASH); // kembali ke login screen
+    Get.offAllNamed(Routes.LOGIN); // kembali ke login screen
   }
 
   // Di HomeController
@@ -105,31 +96,6 @@ class HomeController extends GetxController {
     }
   }
 
-  Future<Map<String, dynamic>?> getLastRead() async {
-    // Mengambil data bookmark dari database
-    Database db = await database.db;
-    List<Map<String, dynamic>> dataLastRead = await db.query(
-      "bookmarks",
-      where: "last_read = ?",
-      whereArgs: [1],
-    );
-    if (dataLastRead.isEmpty) {
-      return null;
-    } else {
-      return dataLastRead.first;
-    }
-  }
-
-  Future<List<Map<String, dynamic>>> getBookmark() async {
-    // Mengambil data bookmark dari database
-    Database db = await database.db;
-    List<Map<String, dynamic>> allBookmarks = await db.query(
-      "bookmarks",
-      where: "last_read = ?",
-      whereArgs: [0],
-    );
-    return allBookmarks;
-  }
 
   Future<void> fetchAllSurah() async {
     allSurahs = await getAllSurah();
