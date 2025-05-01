@@ -20,7 +20,7 @@ void main() async {
       darkTheme: dark,
       themeMode: ThemeMode.system,
       title: "Application",
-      initialRoute: isLoggedIn ? AppPages.HOME : AppPages.INITIAL,
+      initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
       initialBinding: BindingsBuilder(() {
         Get.put(SettingsController());

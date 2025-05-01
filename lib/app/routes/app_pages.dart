@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:quran/app/modules/login/bindings/login_binding.dart';
 import 'package:quran/app/modules/login/views/login_view.dart';
+import 'package:quran/splash_screen.dart';
 
 import '../modules/detail_juz/bindings/detail_juz_binding.dart';
 import '../modules/detail_juz/views/detail_juz_view.dart';
@@ -16,10 +17,15 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.LOGIN;
+  static const INITIAL = Routes.SPLASH;
   static const HOME = Routes.HOME;
 
   static final routes = [
+    GetPage(
+      name: _Paths.SPLASH,
+      page: () => const SplashScreen(),
+      transition: Transition.cupertino,
+    ),
     GetPage(
       name: _Paths.LOGIN,
       page: () => const LoginView(),
