@@ -24,26 +24,31 @@ class AppPages {
       name: _Paths.SPLASH,
       page: () => const SplashView(),
       binding: SplashBinding(),
+      transition: Transition.cupertino,
     ),
     GetPage(
       name: _Paths.HOME,
       page: () => const HomeView(),
       binding: HomeBinding(),
+      transition: Transition.cupertino,
     ),
     GetPage(
       name: _Paths.DETAIL_SURAH,
       page: () => DetailSurahView(),
       binding: DetailSurahBinding(),
+      transition: Transition.cupertino,
     ),
     GetPage(
       name: _Paths.DETAIL_JUZ,
       page: () => DetailJuzView(),
       binding: DetailJuzBinding(),
+      transition: Transition.cupertino,
     ),
     GetPage(
       name: _Paths.SETTINGS,
       page: () => const SettingsView(),
       binding: SettingsBinding(),
+      transition: Transition.cupertino,
     ),
   ];
 }

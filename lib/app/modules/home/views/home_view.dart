@@ -40,15 +40,6 @@ class HomeView extends GetView<HomeController> {
       drawer: NavBar(),
       appBar: AppBar(
         centerTitle: true,
-
-        actions: [
-          IconButton(
-            onPressed: () {
-              Get.toNamed(Routes.SETTINGS);
-            },
-            icon: Icon(Icons.settings),
-          ),
-        ],
         title: Text(
           "Al-Quran App",
           style: GoogleFonts.nunito(

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
-import 'package:quran/app/routes/app_pages.dart';
 import 'package:quran/app/constant/color.dart';
 
 import '../controllers/splash_controller.dart';
@@ -41,11 +41,27 @@ class SplashView extends GetView<SplashController> {
               height: 200,
             ),
             SizedBox(height: 30),
-            IconButton(
-              icon: FaIcon(FontAwesomeIcons.google),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Get.isDarkMode ? appGreenLight2 : appGreenDark,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              label: Text(
+                "Sign Google",
+                style: GoogleFonts.nunito(fontSize: 16, color: Colors.white),
+              ),
+              icon: FaIcon(
+                FontAwesomeIcons.google,
+                color: Colors.white,
+                size: 25,
+              ),
               onPressed: () => controller.signInWithGoogle(),
-              color: Colors.white,
-              iconSize: 30,
             ),
           ],
         ),
